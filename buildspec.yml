@@ -14,5 +14,9 @@ phases:
       - ng build --configuration production
   post_build:
     commands:
-      - echo Build completed successfully.
-      - aws s3 sync dist/kookur-FE/ s3://kookur-frontend --delete  
+       - echo Checking build output directory...
+      - ls -al dist/
+      - ls -al dist/kookur-FE/
+      - echo Syncing build output to S3...
+      - aws s3 sync dist/kookur-FE/ s3://kookur-frontend --delete
+      - if [ $? -ne 0 ]; then echo "S3 sync failed"; exit 1; fi 
