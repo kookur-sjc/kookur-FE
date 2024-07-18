@@ -15,4 +15,4 @@ phases:
   post_build:
     commands:
       - echo Build completed successfully.
-      - aws s3 sync dist/kookur-fe/ s3://kookur-frontend --delete  
+      - aws s3 sync dist/kookur-fe/browser/ s3://kookur-frontend --delete  
