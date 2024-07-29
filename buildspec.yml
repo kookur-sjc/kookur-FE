@@ -16,5 +16,5 @@ phases:
     commands:
       - echo Build completed successfully.
       - aws s3 sync dist/kookur-fe/browser/ s3://kookur-frontend --delete
-       - echo Creating CloudFront invalidation
+      - echo Creating CloudFront invalidation
       - aws cloudfront create-invalidation --distribution-id EFD6D8GULOR4B --paths "/*"  
