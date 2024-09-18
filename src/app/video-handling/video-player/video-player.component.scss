@@ -1,0 +1,30 @@
+.video-container {
+    height: 100vh; /* Full viewport height */
+    overflow-y: scroll;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  video {
+    width: 400px;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .input-container {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    padding: 10px;
+  }
+  
+  .input-container input {
+    padding: 5px;
+    font-size: 16px;
+  }
+  
+  .input-container button {
+    padding: 5px 10px;
+    font-size: 16px;
+    cursor: pointer;
+  }

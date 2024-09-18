@@ -1,0 +1,13 @@
+<h1>Video Upload</h1>
+<form (ngSubmit)="onUploadVideo()" #videoForm="ngForm">
+  <input type="text" name="moods" [(ngModel)]="moods" placeholder="Enter moods" required>
+  <input type="text" name="tags" [(ngModel)]="tags" placeholder="Enter tags" required>
+  <input type="file" (change)="onFileSelected($event)" accept="video/mp4" required>
+  <button type="submit">Upload Video</button>
+</form>
+
+<!-- <video width="400" controls>
+    <source src="https://kookurvideostorage.s3.ap-south-1.amazonaws.com/hey123" type="video/mp4">
+    Your browser does not support the video tag.
+</video> -->
+

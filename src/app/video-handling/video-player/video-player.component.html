@@ -1,0 +1,16 @@
+<div class="input-container">
+    <input type="text" placeholder="Enter Tags (comma-separated)" [(ngModel)]="tags">
+    <input type="text" placeholder="Enter Moods (comma-separated)" [(ngModel)]="moods">
+    <button (click)="loadVideos(tags, moods)">Load Videos</button>
+  </div>
+
+  <div class="video-list" (scroll)="handleScroll($event)">
+    <div *ngFor="let videoUrl of videos; let i = index" class="video-container">
+      <video controls [src]="videoUrl" class="video-player"></video>
+    </div>
+  </div>
+
+  <!-- <video width="400" controls>
+    <source src="https://kookurvideostorage.s3.ap-south-1.amazonaws.com/hey123" type="video/mp4">
+    Your browser does not support the video tag.
+</video> -->
