@@ -1,0 +1,55 @@
+<div
+  class="product-details-container flex flex-col lg:flex-row"
+  [class.overflow-y-auto]="isDesktop"
+>
+  <!-- Image Section -->
+  <div
+    class="image-section w-full lg:w-1/3"
+    [class.sticky]="isDesktop"
+    [class.top-0]="isDesktop"
+  >
+    <div class="main-image relative">
+      <img
+        [src]="product?.images?.[currentImageIndex]"
+        alt="Product Image"
+        class="w-full h-auto object-cover"
+      />
+    </div>
+    <!-- Thumbnail Section -->
+    <div
+    class="thumbnails flex space-x-2 overflow-x-auto lg:overflow-visible"
+  >
+    <img
+      *ngFor="let image of product?.images; let i = index"
+      [src]="image"
+      alt="Thumbnail"
+      class="w-16 h-16 object-cover cursor-pointer border border-gray-300 hover:border-gray-500"
+      (click)="selectImage(i)"
+    />
+  </div>  
+    <!-- Add to Cart / Buy Now Section -->
+    <div class="actions mt-4 lg:mt-8 flex justify-center space-x-4 w-full">
+      <button (click)= "addToCart(product)" class="bg-green-500 text-white px-4 py-2 rounded w-full">
+        Add to Cart
+      </button>
+      <button class="bg-blue-500 text-white px-4 py-2 rounded w-full" (click)="buyNow(product)">
+        Buy Now
+      </button>
+    </div>
+  </div>
+
+  <!-- Details Section -->
+  <div class="details-section w-full lg:w-2/3 px-4 lg:px-8 mt-8 lg:mt-0">
+    <h1 class="text-2xl font-bold mb-4">{{ product?.itemName }}</h1>
+    <p class="text-gray-600 mb-4">{{ product?.itemDescription }}</p>
+    <p class="text-green-600 text-lg font-semibold mb-8">
+      ₹{{ product?.pricePerUnit }}
+    </p>
+    <!-- Additional Details -->
+    <div>
+      <p class="text-gray-800">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+      </p>
+    </div>
+  </div>
+</div>

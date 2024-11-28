@@ -1,0 +1,20 @@
+.product-details-container {
+  max-width: 1200px;
+  margin: auto;
+}
+
+.details-section {
+  height: calc(40vh - 20px); /* Desktop: Adjust height to viewport */
+}
+
+.thumbnails img {
+  transition: transform 0.3s;
+}
+
+.thumbnails img:hover {
+  transform: scale(1.1); /* Slight zoom on hover */
+}
+
+.actions button {
+  min-width: 100px; /* Ensure consistent button size */
+}

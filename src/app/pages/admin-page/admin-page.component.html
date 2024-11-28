@@ -1,0 +1,19 @@
+<div>
+    <form (ngSubmit)="onSubmit()" #productForm="ngForm">
+      <!-- Other fields for item details -->
+      <input type="text" placeholder="Item Name" [(ngModel)]="itemInventory.itemName" name="itemName" required />
+      <input type="text" placeholder="Description" [(ngModel)]="itemInventory.itemDescription" name="itemDescription" required />
+      <input type="text" placeholder="Dog Name" [(ngModel)]="itemInventory.dogName" name="dogName" required />
+      <input type="number" placeholder="Price Per Unit" [(ngModel)]="itemInventory.pricePerUnit" name="pricePerUnit" required />
+      <input type="number" placeholder="Quantity" [(ngModel)]="itemInventory.quantity" name="quantity" required />
+      <input type="text" placeholder="Category" [(ngModel)]="itemInventory.category" name="category" required />
+      <input type="text" placeholder="Sub Category" [(ngModel)]="itemInventory.subCategory" name="subCategory" required />
+      <input type="number" placeholder="Max Order Quantity" [(ngModel)]="itemInventory.maxOrderQuantity" name="maxOrderQuantity" required />
+1
+      <!-- File input for multiple image selection -->
+      <input type="file" (change)="onFileSelected($event)" multiple />
+  
+      <!-- Submit button -->
+      <button type="submit">Add New Item</button>
+    </form>
+  </div>

@@ -1,0 +1,64 @@
+/* admin.component.css */
+.admin-container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 20px;
+    text-align: center;
+  }
+  
+  h1 {
+    font-size: 2em;
+    color: #333;
+    margin-bottom: 20px;
+  }
+  
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-width: 400px;
+    margin: auto;
+  }
+  
+  input {
+    padding: 12px;
+    font-size: 1em;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    transition: border-color 0.3s;
+  }
+  
+  input:focus {
+    border-color: #007aff;
+  }
+  
+  button {
+    background-color: #007aff;
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  button:hover {
+    background-color: #005bb5;
+  }
+  
+  
+  @media (max-width: 768px) {
+    .admin-container {
+      padding: 10px;
+    }
+  
+    form {
+      width: 100%;
+    }
+  
+    button {
+      padding: 10px;
+    }
+  }
+  

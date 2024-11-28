@@ -8,6 +8,9 @@ import { Observable } from 'rxjs';
 export class VideoService {
 
   constructor(private http: HttpClient) {}
+
+  private url = 'http://kookurbe.ap-south-1.elasticbeanstalk.com';
+  private url_local = 'http://localhost:5000';
     
    
   uploadVideo(file: any, moods:string, tags: string):void {
@@ -15,7 +18,7 @@ export class VideoService {
     const fileName = file.name;
     const videoData = { moods: moods, tags: tags };
 
-    this.http.post(`http://kookurbe.ap-south-1.elasticbeanstalk.com/uploadUrl?filename=${fileName}`,videoData, { responseType: 'text' })
+    this.http.post(`${this.url_local}/uploadUrl?filename=${fileName}`,videoData, { responseType: 'text' })
       .subscribe((res: string) => {
       
      this.http.put(res,file,{headers: {'Content-Type': 'video/mp4'}})
@@ -28,7 +31,7 @@ export class VideoService {
   }
 
   getVideoUrls(tags:string, moods:string): Observable<string[]>  {
-    return this.http.get<string[]>(`http://kookurbe.ap-south-1.elasticbeanstalk.com/video/url`, {
+    return this.http.get<string[]>(`${this.url_local}/video/url`, {
       params: { tags, moods },
     });
   }

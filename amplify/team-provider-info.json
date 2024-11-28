@@ -1,0 +1,15 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-kookur-dev-2e420-authRole",
+      "UnauthRoleArn": "arn:aws:iam::381492276068:role/amplify-kookur-dev-2e420-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::381492276068:role/amplify-kookur-dev-2e420-authRole",
+      "Region": "ap-south-1",
+      "DeploymentBucketName": "amplify-kookur-dev-2e420-deployment",
+      "UnauthRoleName": "amplify-kookur-dev-2e420-unauthRole",
+      "StackName": "amplify-kookur-dev-2e420",
+      "StackId": "arn:aws:cloudformation:ap-south-1:381492276068:stack/amplify-kookur-dev-2e420/dae576d0-83e7-11ef-a274-06c918dad631",
+      "AmplifyAppId": "d1o7oetj3h4il9"
+    }
+  }
+}

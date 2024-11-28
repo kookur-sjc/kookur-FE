@@ -1,0 +1,104 @@
+<!-- navbar.component.html -->
+<nav class="w-full h-20 py-2 bg-gradient-to-r from-teal-400 to-blue-500 text-black flex justify-between items-center shadow-md">
+    <!-- Logo -->
+    <div class="text-lg font-semibold">
+      <a href="#">KOOKUR</a>
+    </div>
+  
+    <!-- Desktop Links -->
+    <div class="hidden md:flex space-x-6">
+      <a
+        href="#"
+        class="relative px-3 py-2 rounded-md transition duration-300 hover:bg-gray-300 hover:text-black"
+      >
+        Home
+      </a>
+      <a
+        href="/all-products"
+        class="relative px-3 py-2 rounded-md transition duration-300 hover:bg-gray-300 hover:text-black"
+      >
+        Shop
+      </a>
+      <a
+        href="/player"
+        class="relative px-3 py-2 rounded-md transition duration-300  hover:bg-gray-300 hover:text-black"
+      >
+        Video
+      </a>
+      <a
+        href="#"
+        class="relative px-3 py-2 rounded-md transition duration-300 hover:bg-gray-300 hover:text-black"
+      >
+        Games
+      </a>
+
+      <a
+      href="javascript:void(0)" 
+      (click)="onCartClick()"
+      class="relative px-3 py-2 rounded-md transition duration-300 hover:bg-gray-300 hover:text-black"
+    >
+      Cart
+    </a>
+    </div>
+  
+    <!-- Mobile Menu Icon -->
+    <button class="md:hidden p-2 focus:outline-none" (click)="toggleMenu()">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+      </svg>
+    </button>
+  </nav>
+  
+  <!-- Mobile Menu -->
+  <div *ngIf="isMenuOpen" class="md:hidden bg-white shadow-lg">
+    <div class="flex flex-col p-4 space-y-2 text-center">
+      <a href="#" class="py-2 text-black hover:bg-gray-300 rounded-md transition duration-300 hover:text-black">
+        Home
+      </a>
+      <a  href="/player" class="py-2 text-black hover:bg-gray-300 rounded-md transition duration-300 hover:text-black">
+        Video
+      </a>
+      <a href="/all-products" class="py-2 text-black hover:bg-gray-300 rounded-md transition duration-300 hover:text-black">
+        Shop
+      </a>
+      <a href="#" class="py-2 text-black hover:bg-gray-300 rounded-md transition duration-300 hover:text-black">
+        Games
+      </a>
+    </div>
+  </div>
+
+
+  <div class="md:hidden fixed bottom-0 left-0 w-full bg-white-600 flex justify-around p-2 text-black">
+    <a href="#" class="hover:text-grey-300 flex flex-col items-center">
+      <!-- Home Icon -->
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M3 10.5L12 3l9 7.5V21a1 1 0 01-1 1h-5a1 1 0 01-1-1v-4a1 1 0 00-1-1h-4a1 1 0 00-1 1v4a1 1 0 01-1 1H4a1 1 0 01-1-1v-10.5z" />
+      </svg>
+      <span class="text-xs">Home</span>
+    </a>
+    <a  href="/player" class="hover:text-grey-300 flex flex-col items-center">
+      <!-- Shop Icon -->
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M16 11h-1V9a4 4 0 00-8 0v2H6a1 1 0 00-1 1v9a1 1 0 001 1h14a1 1 0 001-1v-9a1 1 0 00-1-1h-4zM8 9a2 2 0 014 0v2H8V9zm8 11H8v-6h8v6z" />
+      </svg>
+      <span class="text-xs">Video</span>
+    </a>
+    <a href="/all-products" class="hover:text-grey-300 flex flex-col items-center">
+      <!-- About Icon -->
+      <img
+      src="/assets/icons/shopping cart.svg"
+      alt="Shop"
+      class="w-6 h-6 mx-auto"
+    />
+      <span class="text-xs">Shop</span>
+    </a>
+    <a href="#" class="hover:text-grey-300 flex flex-col items-center">
+      <!-- Contact Icon -->
+      <img
+      src="/assets/icons/games-icon.svg"
+      alt="Games"
+      class="w-6 h-6 mx-auto"
+    />
+      <span class="text-xs">Games</span>
+    </a>
+  </div>

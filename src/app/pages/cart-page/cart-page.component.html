@@ -1,0 +1,34 @@
+<div class="cart-page p-4">
+  <h2 class="text-xl font-bold mb-4">Your Cart</h2>
+  <div *ngIf="cartItemsWithDetails.length; else emptyCart" class="cart-items space-y-4">
+    <div *ngFor="let entry of cartItemsWithDetails" class="cart-item flex items-center space-x-4">
+      <img
+        *ngIf="entry.details?.imageUrl"
+        [src]="entry.details?.imageUrl"
+        alt="{{ entry.details?.itemName }}"
+        class="w-16 h-16 object-cover rounded"
+      />
+      <div class="flex-grow">
+        <p class="font-semibold">{{ entry.details?.itemName || 'Loading...' }}</p>
+        <p>Quantity: {{ entry.item.quantity }}</p>
+        <p>Price: {{ entry.details?.pricePerUnit }}</p>
+      </div>
+      <button
+        (click)="removeItemFromCart(entry.item.cartItemId)"
+        class="text-red-500"
+      >
+        Remove
+      </button>
+    </div>
+   <button  class="text-red-500"
+    (click)="navigateToOrders()"
+    >
+    Place Order
+    </button>
+  </div>
+  
+
+  <ng-template #emptyCart>
+    <p>Your cart is empty.</p>
+  </ng-template>
+</div>

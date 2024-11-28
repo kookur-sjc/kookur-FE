@@ -1,4 +1,48 @@
-<div class="input-container">
+<div class="container mx-auto px-4 py-8 h-screen overflow-hidden">
+  <!-- Input Section -->
+  <div  *ngIf="!videosLoaded" class="input-container flex flex-col items-center space-y-4 mb-8">
+    <input
+      type="text"
+      placeholder="Enter Tags (comma-separated)"
+      [(ngModel)]="tags"
+      class="border rounded-lg px-4 py-2 w-full max-w-md"
+    />
+    <input
+      type="text"
+      placeholder="Enter Moods (comma-separated)"
+      [(ngModel)]="moods"
+      class="border rounded-lg px-4 py-2 w-full max-w-md"
+    />
+    <button
+      (click)="loadVideos(tags, moods)"
+      class="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition"
+    >
+      Load Videos
+    </button>
+  </div>
+
+  <!-- Video Section -->
+  <div
+    class="video-list h-full overflow-y-auto snap-y snap-mandatory overflow-hidden"
+    (scroll)="onScroll($event)"
+  >
+    <div
+      *ngFor="let videoUrl of videos; let i = index"
+      class="video-container h-screen flex justify-center items-center snap-center overflow-hidden"
+    >
+      <video
+        #videoElement
+        [src]="videoUrl"
+        class="video-player max-h-full max-w-full"
+        muted
+        controls
+      ></video>
+    </div>
+  </div>
+</div>
+
+
+<!-- <div class="input-container">
     <input type="text" placeholder="Enter Tags (comma-separated)" [(ngModel)]="tags">
     <input type="text" placeholder="Enter Moods (comma-separated)" [(ngModel)]="moods">
     <button (click)="loadVideos(tags, moods)">Load Videos</button>
@@ -8,7 +52,7 @@
     <div *ngFor="let videoUrl of videos; let i = index" class="video-container">
       <video controls [src]="videoUrl" class="video-player"></video>
     </div>
-  </div>
+  </div> -->
 
   <!-- <video width="400" controls>
     <source src="https://kookurvideostorage.s3.ap-south-1.amazonaws.com/hey123" type="video/mp4">

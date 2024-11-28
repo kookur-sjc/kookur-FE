@@ -1,0 +1,53 @@
+<div class="home-page flex flex-col md:flex-row items-center justify-around p-6 min-h-screen bg-sky-200">
+    <!-- Mood Videos Feature -->
+    <div
+      class="feature-box group bg-gradient-to-b from-teal-200 to-blue-400 hover:from-pink-100 hover:to-pink-500   text-white p-6 rounded-lg shadow-lg flex flex-col items-center justify-center transition transform hover:scale-105 hover:shadow-2xl cursor-pointer"
+      (click)="navigateToFeature('videos')"
+    >
+    <div class="media-container w-24 h-24 mb-4 rounded-full rounded-full overflow-hidden shadow-md relative">
+        <video
+          #moodVideoPlayer
+          [src]="currentVideo"
+          autoplay
+          loop
+          muted
+          playsinline
+          class="w-full h-full object-cover transition-opacity duration-1000 ease-in-out"
+          (ended)="playNextVideo()"
+        ></video>
+      </div>
+      <h2 class="text-xl font-bold mb-2">Mood Videos</h2>
+      <p class="text-center">Discover videos tailored to lift your mood and energize your day.</p>
+    </div>
+  
+    <!-- Charity E-Commerce Feature -->
+    <div
+      class="feature-box group bg-gradient-to-b from-teal-400 to-blue-500  hover:from-pink-100 hover:to-pink-500 text-white p-6 rounded-lg shadow-lg flex flex-col items-center justify-center transition transform hover:scale-105 hover:shadow-2xl cursor-pointer mt-6 md:mt-0"
+      (click)="navigateToFeature('ecommerce')"
+    >
+      <div class="media-container w-24 h-24 mb-4 rounded-full overflow-hidden shadow-md">
+        <video autoplay loop muted playsinline class="w-full h-full object-cover">
+          <source src="" type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+      </div>
+      <h2 class="text-xl font-bold mb-2">Charity E-Commerce</h2>
+      <p class="text-center">Support a cause by purchasing paints and other products.</p>
+    </div>
+  
+    <!-- Games Feature -->
+    <div
+      class="feature-box group bg-gradient-to-b from-pink-100 to-pink-500 hover:from-teal-400 hover:to-blue-500 text-white p-6 rounded-lg shadow-lg flex flex-col items-center justify-center transition transform hover:scale-105 hover:shadow-2xl cursor-pointer mt-6 md:mt-0"
+      (click)="navigateToFeature('games')"
+    >
+      <div class="media-container w-24 h-24 mb-4 rounded-full overflow-hidden shadow-md">
+        <video autoplay loop muted playsinline class="w-full h-full object-cover">
+          <source src="https://kookurvideostorage.s3.ap-south-1.amazonaws.com/2024-02-16_18-26-14_UTC.mp4" type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+      </div>
+      <h2 class="text-xl font-bold mb-2">Games</h2>
+      <p class="text-center">Have fun with interactive games designed for everyone.</p>
+    </div>
+  </div>
+  

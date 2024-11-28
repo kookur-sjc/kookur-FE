@@ -1,0 +1,174 @@
+<div class="admin-page p-6 space-y-10 bg-gray-50 min-h-screen">
+    <h1 class="text-3xl font-bold text-center text-blue-600">Admin Panel</h1>
+  
+    <!-- Video Upload Section -->
+    <section class="video-upload bg-white shadow-md rounded-lg p-6 space-y-4">
+      <h2 class="text-2xl font-semibold text-gray-800">Upload Videos</h2>
+      <form (ngSubmit)="onUploadVideo()" class="space-y-4">
+        <input
+          type="text"
+          name="moods"
+          [(ngModel)]="moods"
+          placeholder="Enter moods"
+          required
+          class="input-field"
+        />
+        <input
+          type="text"
+          name="tags"
+          [(ngModel)]="tags"
+          placeholder="Enter tags"
+          required
+          class="input-field"
+        />
+        <input
+          type="file"
+          (change)="onFileSelected($event)"
+          accept="video/mp4"
+          required
+          class="file-input"
+        />
+        <button type="submit" class="btn-primary w-full">Upload Video</button>
+      </form>
+    </section>
+  
+    <!-- Manage Items Section -->
+    <section class="manage-items bg-white shadow-md rounded-lg p-6 space-y-4">
+      <h2 class="text-2xl font-semibold text-gray-800">Manage Shop Items</h2>
+  
+      <!-- Add Item Form -->
+      <form (ngSubmit)="onSubmit()" class="space-y-4">
+        <div class="grid grid-cols-2 gap-4">
+          <input
+            type="text"
+            placeholder="Item Name"
+            [(ngModel)]="itemInventory.itemName"
+            name="itemName"
+            required
+            class="input-field"
+          />
+          <input
+            type="text"
+            placeholder="Description"
+            [(ngModel)]="itemInventory.itemDescription"
+            name="itemDescription"
+            required
+            class="input-field"
+          />
+          <input
+            type="text"
+            placeholder="Dog Name"
+            [(ngModel)]="itemInventory.dogName"
+            name="dogName"
+            required
+            class="input-field"
+          />
+          <input
+            type="number"
+            placeholder="Price Per Unit"
+            [(ngModel)]="itemInventory.pricePerUnit"
+            name="pricePerUnit"
+            required
+            class="input-field"
+          />
+          <input
+            type="number"
+            placeholder="Quantity"
+            [(ngModel)]="itemInventory.quantity"
+            name="quantity"
+            required
+            class="input-field"
+          />
+          <input
+            type="text"
+            placeholder="Category"
+            [(ngModel)]="itemInventory.category"
+            name="category"
+            required
+            class="input-field"
+          />
+          <input
+            type="text"
+            placeholder="Sub Category"
+            [(ngModel)]="itemInventory.subCategory"
+            name="subCategory"
+            required
+            class="input-field"
+          />
+          <input
+            type="number"
+            placeholder="Max Order Quantity"
+            [(ngModel)]="itemInventory.maxOrderQuantity"
+            name="maxOrderQuantity"
+            required
+            class="input-field"
+          />
+        </div>
+        <input
+          type="file"
+          (change)="onFileSelected($event)"
+          multiple
+          class="file-input"
+        />
+        <button type="submit" class="btn-primary w-full">Add New Item</button>
+      </form>
+  
+      <!-- Items Table -->
+      <table class="table-auto w-full mt-6">
+        <thead>
+          <tr class="bg-gray-100">
+            <th class="py-2 px-4">Item Name</th>
+            <th class="py-2 px-4">Category</th>
+            <th class="py-2 px-4">Price</th>
+            <th class="py-2 px-4">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of items" class="hover:bg-gray-50">
+            <td class="py-2 px-4">{{ item.itemName }}</td>
+            <td class="py-2 px-4">{{ item.category }}</td>
+            <td class="py-2 px-4">{{ item.pricePerUnit }}</td>
+            <td class="py-2 px-4 space-x-2">
+              <button (click)="editItem(item)" class="btn-secondary">Edit</button>
+              <button (click)="deleteItem(item.itemId)" class="btn-danger">Delete</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  
+    <!-- Manage Orders Section -->
+    <section class="manage-orders bg-white shadow-md rounded-lg p-6 space-y-4">
+      <h2 class="text-2xl font-semibold text-gray-800">Manage Orders</h2>
+      <table class="table-auto w-full">
+        <thead>
+          <tr class="bg-gray-100">
+            <th class="py-2 px-4">Order ID</th>
+            <th class="py-2 px-4">User</th>
+            <th class="py-2 px-4">Status</th>
+            <th class="py-2 px-4">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- <tr *ngFor="let order of orders" class="hover:bg-gray-50">
+            <td class="py-2 px-4">{{ order.id }}</td>
+            <td class="py-2 px-4">{{ order.user }}</td>
+            <td class="py-2 px-4">{{ order.status }}</td>
+            <td class="py-2 px-4 space-x-2">
+              <select
+                [(ngModel)]="order.status"
+                (change)="updateOrderStatus(order)"
+                class="input-field"
+              >
+                <option value="Pending">Pending</option>
+                <option value="Processing">Processing</option>
+                <option value="Completed">Completed</option>
+                <option value="Cancelled">Cancelled</option>
+              </select>
+            </td>
+          </tr> -->
+        </tbody>
+      </table>
+    </section>
+  </div>
+  

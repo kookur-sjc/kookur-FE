@@ -1,0 +1,65 @@
+<div class="container mx-auto px-4 py-6">
+    <!-- Steps -->
+    <div class="steps flex justify-between items-center mb-8">
+      <div [class.active]="currentStep === 1" class="step">
+        <div class="circle">1</div>
+        <p>Address</p>
+      </div>
+      <div [class.active]="currentStep === 2" class="step">
+        <div class="circle">2</div>
+        <p>Order Summary</p>
+      </div>
+      <div [class.active]="currentStep === 3" class="step">
+        <div class="circle">3</div>
+        <p>Payment</p>
+      </div>
+    </div>
+  
+    <!-- Address Step -->
+    <div *ngIf="currentStep === 1" class="address-section">
+      <h2 class="text-2xl font-bold mb-4">Shipping Address</h2>
+      <!-- <div *ngIf="address; else noAddress" class="border p-4 rounded-md"> -->
+        <!-- <p class="font-semibold">{{ address.street }}, {{ address.city }}, {{ address.state }}</p> -->
+        <div class="border p-4 rounded-md">
+        <button class="btn btn-primary mt-4" (click)="proceedToNextStep()">Confirm Address</button>
+      </div>
+      <!-- <ng-template #noAddress>
+        <form (ngSubmit)="saveAddress()" class="space-y-4">
+          <input type="text" placeholder="Street" [(ngModel)]="address.street" name="street" class="input" required />
+          <input type="text" placeholder="City" [(ngModel)]="address.city" name="city" class="input" required />
+          <input type="text" placeholder="State" [(ngModel)]="address.state" name="state" class="input" required />
+          <button type="submit" class="btn btn-primary mt-4">Save Address</button>
+        </form>
+      </ng-template> -->
+    </div>
+  
+    <!-- Order Summary Step -->
+    <div *ngIf="currentStep === 2" class="order-summary">
+      <h2 class="text-2xl font-bold mb-4">Order Summary</h2>
+      <div *ngIf="cartItemsWithDetails.length" class="cart-items space-y-4">
+        <div *ngFor="let entry of cartItemsWithDetails" class="cart-item flex items-center space-x-6 p-4 border rounded-lg shadow-md">
+          <img
+            *ngIf="entry.details?.imageUrl"
+            [src]="entry.details?.imageUrl"
+            alt="{{ entry.details?.itemName }}"
+            class="w-20 h-20 object-cover rounded"
+          />
+          <div class="flex-grow">
+            <p class="font-semibold text-lg">{{ entry.details?.itemName || 'Loading...' }}</p>
+            <p>Quantity: {{ entry.item.quantity }}</p>
+            <p>Price: ${{ entry.details?.pricePerUnit }}</p>
+          </div>
+        </div>
+      </div>
+      <p class="total text-right font-bold text-xl mt-6">Total: ${{ totalAmount }}</p>
+      <button class="btn btn-primary mt-6" (click)="proceedToNextStep()">Proceed to Payment</button>
+    </div>
+  
+    <!-- Payment Step -->
+    <div *ngIf="currentStep === 3" class="payment-section">
+      <h2 class="text-2xl font-bold mb-4">Payment</h2>
+      <p class="text-lg mb-4">Amount to be paid: <span class="font-bold">${{ totalAmount }}</span></p>
+      <button class="btn btn-success" (click)="placeOrder()">Place Order</button>
+    </div>
+  </div>
+  
