@@ -1,4 +1,5 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { Component, ElementRef, Inject, PLATFORM_ID, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 
 @Component({
@@ -10,7 +11,7 @@ import { Router } from '@angular/router';
 })
 export class HomePageComponent {
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, @Inject(PLATFORM_ID) private platformId: Object) {}
 
   navigateToFeature(feature: string) {
     switch (feature) {
@@ -35,7 +36,7 @@ export class HomePageComponent {
     'https://kookurvideostorage.s3.ap-south-1.amazonaws.com/2023-11-30_13-23-57_UTC.mp4',
     'https://kookurvideostorage.s3.ap-south-1.amazonaws.com/2023-12-03_16-25-44_UTC.mp4',
   ];
-
+  // swiper: Swiper | undefined;
   currentVideoIndex = 0;
 
   ngOnInit(): void {

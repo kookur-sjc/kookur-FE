@@ -5,12 +5,13 @@ import { CartItem, ItemInventory, UserAddressTable } from '../../model';
 import { CognitoService } from '../../cognito.service';
 import { NgFor, NgIf, NgSwitchDefault } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
+import { FormsModule, NgModel } from '@angular/forms';
 
 @Component({
   selector: 'app-order-page',
   standalone: true,
   providers: [EcomService],
-  imports: [NgIf, NgFor, HttpClientModule],
+  imports: [NgIf, NgFor, HttpClientModule, FormsModule],
   templateUrl: './order-page.component.html',
   styleUrl: './order-page.component.scss'
 })
@@ -38,7 +39,7 @@ export class OrderPageComponent {
       const user = await this.cognitoService.getUser();
       this.userId = user.userId;
 
-      // // Fetch Address
+      // Fetch Address
       // this.ecomService.getUserAddress(this.userId).subscribe({
       //   next: (address) => {
       //     this.address = address;
@@ -72,6 +73,17 @@ export class OrderPageComponent {
       console.error('Error initializing order:', error);
     }
   }
+
+  // saveAddress() {
+  //   this.ecomService.setUserAddress(this.address).subscribe({
+  //     next: (response) => {
+  //       console.log('Address saved successfully', response);
+  //     },
+  //     error: (err) => {
+  //       console.error('Error saving address:', err);
+  //     },
+  //   });
+  // }
 
   calculateTotal() {
     this.totalAmount = this.cartItemsWithDetails.reduce((total, entry) => {

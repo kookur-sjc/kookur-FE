@@ -1,53 +1,119 @@
-<div class="home-page flex flex-col md:flex-row items-center justify-around p-6 min-h-screen bg-sky-200">
-    <!-- Mood Videos Feature -->
+<div class="home-container flex flex-col items-center bg-slate-200 min-h-screen relative overflow-hidden">
+  <!-- Welcome Section -->
+  <div class="welcome-section flex flex-col items-center z-10 p-6 text-center">
+    <div class="media-container w-60 h-60 mb-4 rounded-full overflow-hidden shadow-md relative">
+      <video
+        #moodVideoPlayer
+        [src]="currentVideo"
+        autoplay
+        loop
+        muted
+        playsinline
+        class="w-full h-full object-cover transition-opacity duration-1000 ease-in-out"
+        (ended)="playNextVideo()"
+      ></video>
+    </div>
+    <h1 class="mt-4 text-3xl md:font-mono md:text-7xl font-bold text-gray-800">You have been chosen, Hooman</h1>
+  </div>
+
+  <!-- Features Section -->
+  <div class="features-section flex flex-wrap justify-center items-center w-full p-6 gap-6 z-10">
     <div
-      class="feature-box group bg-gradient-to-b from-teal-200 to-blue-400 hover:from-pink-100 hover:to-pink-500   text-white p-6 rounded-lg shadow-lg flex flex-col items-center justify-center transition transform hover:scale-105 hover:shadow-2xl cursor-pointer"
+      class="feature-box w-full sm:w-2/3 lg:w-1/4 bg-gradient-to-b from-sky-200 via-pink-200 to-purple-400 hover:from-sky-300 hover:via-pink-300 hover:to-purple-500 text-gray-800 p-6 sm:p-4 rounded-lg shadow-lg flex flex-col items-center justify-center transition transform hover:scale-105 hover:shadow-2xl cursor-pointer"
       (click)="navigateToFeature('videos')"
     >
-    <div class="media-container w-24 h-24 mb-4 rounded-full rounded-full overflow-hidden shadow-md relative">
-        <video
-          #moodVideoPlayer
-          [src]="currentVideo"
-          autoplay
-          loop
-          muted
-          playsinline
-          class="w-full h-full object-cover transition-opacity duration-1000 ease-in-out"
-          (ended)="playNextVideo()"
-        ></video>
+      <div class="media-container w-24 h-24 mb-4 rounded-full overflow-hidden shadow-md relative">
+        <video autoplay loop muted playsinline class="w-full h-full object-cover">
+          <source src="https://kookurvideostorage.s3.ap-south-1.amazonaws.com/2024-02-16_18-26-14_UTC.mp4" type="video/mp4" />
+        </video>
       </div>
       <h2 class="text-xl font-bold mb-2">Mood Videos</h2>
       <p class="text-center">Discover videos tailored to lift your mood and energize your day.</p>
     </div>
   
-    <!-- Charity E-Commerce Feature -->
     <div
-      class="feature-box group bg-gradient-to-b from-teal-400 to-blue-500  hover:from-pink-100 hover:to-pink-500 text-white p-6 rounded-lg shadow-lg flex flex-col items-center justify-center transition transform hover:scale-105 hover:shadow-2xl cursor-pointer mt-6 md:mt-0"
+      class="feature-box w-full sm:w-2/3 lg:w-1/4 bg-gradient-to-b from-sky-200 via-pink-200 to-purple-400 hover:from-sky-300 hover:via-pink-300 hover:to-purple-500 text-gray-800 p-6 sm:p-4 rounded-lg shadow-lg flex flex-col items-center justify-center transition transform hover:scale-105 hover:shadow-2xl cursor-pointer"
       (click)="navigateToFeature('ecommerce')"
     >
       <div class="media-container w-24 h-24 mb-4 rounded-full overflow-hidden shadow-md">
-        <video autoplay loop muted playsinline class="w-full h-full object-cover">
-          <source src="" type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
+        <video autoplay loop muted playsinline class="w-full h-full object-cover"></video>
       </div>
       <h2 class="text-xl font-bold mb-2">Charity E-Commerce</h2>
       <p class="text-center">Support a cause by purchasing paints and other products.</p>
     </div>
   
-    <!-- Games Feature -->
     <div
-      class="feature-box group bg-gradient-to-b from-pink-100 to-pink-500 hover:from-teal-400 hover:to-blue-500 text-white p-6 rounded-lg shadow-lg flex flex-col items-center justify-center transition transform hover:scale-105 hover:shadow-2xl cursor-pointer mt-6 md:mt-0"
+      class="feature-box w-full sm:w-2/3 lg:w-1/4 bg-gradient-to-b from-sky-200 via-pink-200 to-purple-400 hover:from-sky-300 hover:via-pink-300 hover:to-purple-500 text-gray-800 p-6 sm:p-4 rounded-lg shadow-lg flex flex-col items-center justify-center transition transform hover:scale-105 hover:shadow-2xl cursor-pointer"
       (click)="navigateToFeature('games')"
     >
       <div class="media-container w-24 h-24 mb-4 rounded-full overflow-hidden shadow-md">
         <video autoplay loop muted playsinline class="w-full h-full object-cover">
           <source src="https://kookurvideostorage.s3.ap-south-1.amazonaws.com/2024-02-16_18-26-14_UTC.mp4" type="video/mp4" />
-          Your browser does not support the video tag.
         </video>
       </div>
       <h2 class="text-xl font-bold mb-2">Games</h2>
       <p class="text-center">Have fun with interactive games designed for everyone.</p>
     </div>
   </div>
-  
+
+ <!-- How It Works Section -->
+<div class="how-it-works-section bg-gradient-to-b from-purple-50 via-white to-blue-50 w-full p-8 text-center">
+  <h2 class="text-4xl font-extrabold mb-10 text-gray-800">How It Works</h2>
+  <div class="flex flex-col md:flex-row gap-8 justify-center items-center">
+    <div class="info-card bg-white shadow-lg rounded-lg p-8 transition transform hover:scale-105 hover:shadow-2xl">
+      <div class="icon mb-4 text-blue-500">
+        <svg class="w-12 h-12 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553 2.276a2 2 0 010 3.448L15 18M10 6H6a2 2 0 00-2 2v8a2 2 0 002 2h4m4 0h4a2 2 0 002-2v-4m-6-6l-4 4-4-4" />
+        </svg>
+      </div>
+      <h3 class="text-2xl font-bold mb-4 text-gray-800">Mood Videos</h3>
+      <p class="text-gray-600">Upload and discover videos that resonate with your mood.</p>
+    </div>
+    <div class="info-card bg-white shadow-lg rounded-lg p-8 transition transform hover:scale-105 hover:shadow-2xl">
+      <div class="icon mb-4 text-blue-500">
+        <svg class="w-12 h-12 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c0-1.105-.672-2-1.5-2h-3C6.672 6 6 6.895 6 8v8c0 1.105.672 2 1.5 2h3c.828 0 1.5-.895 1.5-2V8zm6 8c0 1.105-.672 2-1.5 2h-3c-.828 0-1.5-.895-1.5-2V8c0-1.105.672-2 1.5-2h3c.828 0 1.5.895 1.5 2v8z" />
+        </svg>
+      </div>
+      <h3 class="text-2xl font-bold mb-4 text-gray-800">Charity E-Commerce</h3>
+      <p class="text-gray-600">Support charitable causes by purchasing unique products.</p>
+    </div>
+    <div class="info-card bg-white shadow-lg rounded-lg p-8 transition transform hover:scale-105 hover:shadow-2xl">
+      <div class="icon mb-4 text-blue-500">
+        <svg class="w-12 h-12 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l4-4 4 4m0 6l-4 4-4-4" />
+        </svg>
+      </div>
+      <h3 class="text-2xl font-bold mb-4 text-gray-800">Games</h3>
+      <p class="text-gray-600">Engage with fun and interactive games.</p>
+    </div>
+  </div>
+</div>
+
+
+  <!-- Feedback Section -->
+  <div class="feedback-section bg-gray-50 w-full p-8">
+    <h2 class="text-3xl font-bold mb-6 text-center text-gray-800">What People Are Saying</h2>
+    <div class="flex flex-wrap justify-center gap-6">
+      <div class="feedback-card bg-white shadow-md rounded-lg p-6 max-w-xs">
+        <p class="italic text-gray-700">"Kookur has completely transformed my mood on tough days!"</p>
+        <p class="text-right mt-4 font-bold text-gray-800">- Sarah T.</p>
+      </div>
+      <div class="feedback-card bg-white shadow-md rounded-lg p-6 max-w-xs">
+        <p class="italic text-gray-700">"Supporting causes while shopping is such a brilliant idea!"</p>
+        <p class="text-right mt-4 font-bold text-gray-800">- John D.</p>
+      </div>
+      <div class="feedback-card bg-white shadow-md rounded-lg p-6 max-w-xs">
+        <p class="italic text-gray-700">"The games are addictive and super fun for the family!"</p>
+        <p class="text-right mt-4 font-bold text-gray-800">- Emma W.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Donation Section -->
+  <div class="donation-section bg-gradient-to-b from-purple-400 to-purple-600 w-full p-8 text-center text-white">
+    <h2 class="text-3xl font-bold mb-4">Support Our Mission</h2>
+    <p class="mb-6">Your contributions help us make a difference!</p>
+    <button class="bg-white text-purple-600 px-6 py-3 rounded-lg shadow-md font-bold hover:bg-gray-100">Donate Now</button>
+  </div>
+</div>

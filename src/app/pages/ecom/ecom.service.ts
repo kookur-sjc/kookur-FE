@@ -66,8 +66,12 @@ export class EcomService {
     });
   }
 
-  setUserAddress(userAddress: UserAddressTable): Observable<UserAddressTable> {
+  setUserAddress(userAddress?: UserAddressTable): Observable<UserAddressTable> {
     return this.http.post<UserAddressTable>(`${this.apiUrl}/userAddress`, userAddress);
+  }
+
+  getUserAddress(userId: string): Observable<UserAddressTable> {
+    return this.http.get<UserAddressTable>(`${this.apiUrl}/getUserAddress/${userId}`);
   }
 
   removeItemFromCart(userId: string, itemCartId: number): Observable<string> {
