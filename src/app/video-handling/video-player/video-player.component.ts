@@ -22,10 +22,19 @@ export class VideoPlayerComponent implements OnInit {
   @ViewChildren('videoElement') videoElements!: QueryList<ElementRef<HTMLVideoElement>>;
 
 
-
+  videosWatched = 0;
+  showFeedback = false;
+  feedbackMessage = '';
   tags = ''; // To store user input for tags
   moods = ''; // To store user input for moods
   preloadedVideos: HTMLVideoElement[] = []; 
+selectedTags: string[] = [];
+selectedMoods: string[] = [];
+tagsList = ['Dogs', 'Cats', 'Random']; // Example tags
+moodsList = ['Happy', 'Sad', 'Angry', 'Tired']; // Example moods
+currentVideoFeedbackMessage = '';
+watchedVideos: Set<string> = new Set();
+
 
   constructor(private videoService: VideoService, @Inject(PLATFORM_ID) private platformId: Object ) { this.isBrowser = isPlatformBrowser(this.platformId); }
 
@@ -109,12 +118,14 @@ export class VideoPlayerComponent implements OnInit {
   //   }
   // }
 
-  loadVideos(tags: string, moods: string): void {
-    this.videoService.getVideoUrls(tags, moods).subscribe((urls) => {
+  loadVideos(tags:string[],moods: string[]): void {
+    if(this.selectedTags.length > 0 && this.selectedMoods.length > 0) {
+    this.videoService.getVideoUrls(tags[0], moods[0]).subscribe((urls) => {
       this.videos = urls;
       this.videosLoaded = true;
       console.log('Videos loaded:', this.videos);
     });
+  }
   }
 
   onScroll(event: any): void {
@@ -138,13 +149,13 @@ export class VideoPlayerComponent implements OnInit {
     }
   }
 
-  onVideoEnded(index: number): void {
-    if (index < this.videos.length - 1) {
-      const nextVideo = this.videoElements.toArray()[index + 1]?.nativeElement;
-      nextVideo?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      this.playVideo(index + 1);
-    }
-  }
+  // onVideoEnded(index: number): void {
+  //   if (index < this.videos.length - 1) {
+  //     const nextVideo = this.videoElements.toArray()[index + 1]?.nativeElement;
+  //     nextVideo?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  //     this.playVideo(index + 1);
+  //   }
+  // }
 
   playVideo(index: number): void {
     const video = this.videoElements.get(index)?.nativeElement;
@@ -158,6 +169,53 @@ export class VideoPlayerComponent implements OnInit {
     if (video && !video.paused) {
       video.pause();
     }
+  }
+
+  selectTag(tag: string): void {
+    if (!this.selectedTags.includes(tag)) {
+      this.selectedTags.push(tag);
+    } else {
+      this.selectedTags = this.selectedTags.filter((t) => t !== tag);
+    }
+  }
+  
+  selectMood(mood: string): void {
+    if (!this.selectedMoods.includes(mood)) {
+      this.selectedMoods.push(mood);
+    } else {
+      this.selectedMoods = this.selectedMoods.filter((m) => m !== mood);
+    }
+  }
+  
+
+  onAllVideoEnded(index: number): void {
+    const videoUrl = this.videos[index]; // Get the URL of the current video
+    this.watchedVideos.add(videoUrl);   // Mark the current video as watched
+    console.log('Videos watched:', Array.from(this.watchedVideos));
+  
+    // Show feedback after this video ends
+    this.showFeedback = true;
+    this.currentVideoFeedbackMessage =
+      this.moods.includes('happy') || this.tags.includes('positive')
+        ? "We're glad this video improved your mood!"
+        : "We'll keep trying to improve your experience!";
+  };
+  
+  // Proceed to the next video (hide feedback)
+
+  fetchMoreVideos(): void {
+    this.showFeedback = false;
+    this.videosWatched = 0; // Reset the counter
+    this.loadVideos(this.selectedTags, this.selectedMoods); // Fetch the next set of videos
+  }
+  
+  resetSelection(): void {
+    this.showFeedback = false;
+    this.videosWatched = 0; // Reset the counter
+    this.videosLoaded = false; // Hide video section
+    this.videos = []; // Clear current videos
+    this.tags = ''; // Clear selected tags
+    this.moods = ''; // Clear selected moods
   }
   
   // loadVideos(tags: string, moods: string): void {
@@ -184,4 +242,5 @@ export class VideoPlayerComponent implements OnInit {
   //     this.scrollToVideo(this.currentVideoIndex);
   //   }
   // }
+
 }

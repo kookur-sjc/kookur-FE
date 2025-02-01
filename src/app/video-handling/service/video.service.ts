@@ -18,7 +18,7 @@ export class VideoService {
     const fileName = file.name;
     const videoData = { moods: moods, tags: tags };
 
-    this.http.post(`${this.url_local}/uploadUrl?filename=${fileName}`,videoData, { responseType: 'text' })
+    this.http.post(`${this.url}/uploadUrl?filename=${fileName}`,videoData, { responseType: 'text' })
       .subscribe((res: string) => {
       
      this.http.put(res,file,{headers: {'Content-Type': 'video/mp4'}})
@@ -31,7 +31,7 @@ export class VideoService {
   }
 
   getVideoUrls(tags:string, moods:string): Observable<string[]>  {
-    return this.http.get<string[]>(`${this.url_local}/video/url`, {
+    return this.http.get<string[]>(`${this.url}/video/url`, {
       params: { tags, moods },
     });
   }

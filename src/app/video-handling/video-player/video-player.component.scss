@@ -29,3 +29,121 @@
     cursor: pointer;
   }
   
+  .floating-shape {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.4;
+    animation: float infinite ease-in-out;
+    mix-blend-mode: screen; /* Adds a subtle blending effect */
+  }
+  
+  /* Desktop-sized bubbles */
+  .floating-shape:nth-child(1) {
+    width: 120px;
+    height: 120px;
+    top: 5%;
+    left: 10%;
+    animation-duration: 7s;
+  }
+  
+  .floating-shape:nth-child(2) {
+    width: 100px;
+    height: 100px;
+    top: 20%;
+    right: 5%;
+    animation-duration: 9s;
+  }
+  
+  .floating-shape:nth-child(3) {
+    width: 80px;
+    height: 80px;
+    bottom: 25%;
+    left: 15%;
+    animation-duration: 8s;
+  }
+  
+  .floating-shape:nth-child(4) {
+    width: 60px;
+    height: 60px;
+    top: 10%;
+    right: 15%;
+    animation-duration: 6s;
+  }
+  
+  .floating-shape:nth-child(5) {
+    width: 90px;
+    height: 90px;
+    bottom: 15%;
+    right: 10%;
+    animation-duration: 10s;
+  }
+  
+  /* Keyframes for smooth floating animations */
+  @keyframes float {
+    0% {
+      transform: translateY(0px) translateX(0px);
+    }
+    50% {
+      transform: translateY(-15px) translateX(8px);
+    }
+    100% {
+      transform: translateY(0px) translateX(0px);
+    }
+  }
+  
+  /* Adjustments for Mobile View */
+  @media (max-width: 768px) {
+    .floating-shape:nth-child(1) {
+      width: 60px;
+      height: 60px;
+      top: 5%;
+      left: 5%;
+    }
+  
+    .floating-shape:nth-child(2) {
+      width: 50px;
+      height: 50px;
+      top: 15%;
+      right: 5%;
+    }
+  
+    .floating-shape:nth-child(3) {
+      width: 40px;
+      height: 40px;
+      bottom: 20%;
+      left: 10%;
+    }
+  
+    .floating-shape:nth-child(4) {
+      width: 30px;
+      height: 30px;
+      top: 10%;
+      right: 10%;
+    }
+  
+    .floating-shape:nth-child(5) {
+      width: 50px;
+      height: 50px;
+      bottom: 10%;
+      right: 5%;
+    }
+  }
+ 
+  .feedback-section {
+    background: linear-gradient(to bottom, #fdfbfb, #ebedee);
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  .feedback-section h2 {
+    color: #4a4a4a;
+  }
+  .feedback-section button {
+    transition: all 0.3s ease-in-out;
+  }
+  .feedback-section button:hover {
+    transform: scale(1.05);
+  }
+
+  
+  
