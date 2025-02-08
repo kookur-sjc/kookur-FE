@@ -12,6 +12,9 @@ export class VideoService {
   private url = 'https://kookurbe.ap-south-1.elasticbeanstalk.com';
   private url_local = 'http://localhost:5000';
     
+  health(): Observable<string> {
+    return this.http.get<string>(`${this.url}/health`);
+  }
    
   uploadVideo(file: any, moods:string, tags: string):void {
     // const file = event.target.files[0];

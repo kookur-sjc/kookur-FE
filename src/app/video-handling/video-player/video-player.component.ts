@@ -217,6 +217,12 @@ watchedVideos: Set<string> = new Set();
     this.tags = ''; // Clear selected tags
     this.moods = ''; // Clear selected moods
   }
+
+  healthCheck(): void {
+    this.videoService.health().subscribe((response) => {
+      console.log('Health check response:', response);
+    });
+  }
   
   // loadVideos(tags: string, moods: string): void {
   //   this.videoService.getVideoUrls(tags, moods).subscribe((urls) => {
