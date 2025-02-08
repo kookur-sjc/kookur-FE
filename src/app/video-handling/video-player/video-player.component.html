@@ -72,8 +72,8 @@
       #videoElement
       [src]="videoUrl"
       class="max-h-full max-w-full"
-      muted
-      controls
+      playsinline
+      autoplay
       (ended)="onAllVideoEnded(i)"
     ></video>
   </div>
