@@ -151,6 +151,11 @@ st='';
     }
   }
 
+  onMetadataLoaded(video: HTMLVideoElement) {
+    console.log("Metadata Loaded, Attempting to Play");
+    video.play().catch(error => console.log("Play Error:", error));
+  }
+  
   // onVideoEnded(index: number): void {
   //   if (index < this.videos.length - 1) {
   //     const nextVideo = this.videoElements.toArray()[index + 1]?.nativeElement;

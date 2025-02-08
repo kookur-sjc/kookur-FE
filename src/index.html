@@ -7,15 +7,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
-  <script>
-    window.onerror = function(message, source, lineno, colno, error) {
-      alert("Error: " + message + "\nSource: " + source + "\nLine: " + lineno + "\nColumn: " + colno);
-    };
-  
-    window.addEventListener("unhandledrejection", function(event) {
-      alert("Unhandled Promise Rejection: " + event.reason);
-    });
-  </script>
   <app-root></app-root>
 </body>
 </html>
