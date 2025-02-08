@@ -34,6 +34,7 @@ tagsList = ['Dogs', 'Cats', 'Random']; // Example tags
 moodsList = ['Happy', 'Sad', 'Angry', 'Tired']; // Example moods
 currentVideoFeedbackMessage = '';
 watchedVideos: Set<string> = new Set();
+st='';
 
 
   constructor(private videoService: VideoService, @Inject(PLATFORM_ID) private platformId: Object ) { this.isBrowser = isPlatformBrowser(this.platformId); }
@@ -222,6 +223,7 @@ watchedVideos: Set<string> = new Set();
   healthCheck(): void {
     this.videoService.health().subscribe((response) => {
       console.log('Health check response:', response);
+      this.st=response;
     });
   }
   
