@@ -39,6 +39,7 @@ watchedVideos: Set<string> = new Set();
   constructor(private videoService: VideoService, @Inject(PLATFORM_ID) private platformId: Object ) { this.isBrowser = isPlatformBrowser(this.platformId); }
 
   ngOnInit() {
+    this.healthCheck();
     // // Example: fetch videos based on selected tags and moods
     // this.loadVideos('dogs', 'happy');
   }
