@@ -149,10 +149,10 @@ watchedVideos: Set<string> = new Set();
     }
   }
 
-  onMetadataLoaded(video: HTMLVideoElement) {
-    console.log("Metadata Loaded, Attempting to Play");
-    video.play().catch(error => console.log("Play Error:", error));
-  }
+  // onMetadataLoaded(video: HTMLVideoElement) {
+  //   console.log("Metadata Loaded, Attempting to Play");
+  //   video.play().catch(error => console.log("Play Error:", error));
+  // }
 
   // onVideoEnded(index: number): void {
   //   if (index < this.videos.length - 1) {

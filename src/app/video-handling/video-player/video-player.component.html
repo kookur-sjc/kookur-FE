@@ -68,15 +68,12 @@
     *ngFor="let videoUrl of videos; let i = index"
     class="h-screen flex justify-center items-center snap-center overflow-hidden"
   >
-  <p>{{ videoUrl }}</p>
     <video
       #videoElement
       [src]="videoUrl"
       class="max-h-full max-w-full"
       muted
-      playsinline
-      autoplay
-      (loadedmetadata)="onMetadataLoaded(videoElement)"
+      controls
       (ended)="onAllVideoEnded(i)"
     ></video>
   </div>
