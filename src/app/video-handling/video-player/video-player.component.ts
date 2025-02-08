@@ -34,13 +34,11 @@ tagsList = ['Dogs', 'Cats', 'Random']; // Example tags
 moodsList = ['Happy', 'Sad', 'Angry', 'Tired']; // Example moods
 currentVideoFeedbackMessage = '';
 watchedVideos: Set<string> = new Set();
-st='';
 
 
   constructor(private videoService: VideoService, @Inject(PLATFORM_ID) private platformId: Object ) { this.isBrowser = isPlatformBrowser(this.platformId); }
 
   ngOnInit() {
-    this.healthCheck();
     // // Example: fetch videos based on selected tags and moods
     // this.loadVideos('dogs', 'happy');
   }
@@ -155,7 +153,7 @@ st='';
     console.log("Metadata Loaded, Attempting to Play");
     video.play().catch(error => console.log("Play Error:", error));
   }
-  
+
   // onVideoEnded(index: number): void {
   //   if (index < this.videos.length - 1) {
   //     const nextVideo = this.videoElements.toArray()[index + 1]?.nativeElement;
@@ -225,12 +223,6 @@ st='';
     this.moods = ''; // Clear selected moods
   }
 
-  healthCheck(): void {
-    this.videoService.health().subscribe((response) => {
-      console.log('Health check response:', response);
-      this.st=response;
-    });
-  }
   
   // loadVideos(tags: string, moods: string): void {
   //   this.videoService.getVideoUrls(tags, moods).subscribe((urls) => {
