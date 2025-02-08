@@ -64,13 +64,12 @@
   class="h-full overflow-y-auto snap-y snap-mandatory"
   (scroll)="onScroll($event)"
 >
-<h1>
-  {{st}}
-</h1>
+
   <div
     *ngFor="let videoUrl of videos; let i = index"
     class="h-screen flex justify-center items-center snap-center overflow-hidden"
   >
+  <p>{{ videoUrl }}</p>
     <video
       #videoElement
       [src]="videoUrl"
