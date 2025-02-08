@@ -9,7 +9,7 @@ export class VideoService {
 
   constructor(private http: HttpClient) {}
 
-  private url = 'https://kookurbe.ap-south-1.elasticbeanstalk.com';
+  private url = 'https://api.kookur.com';
   private url_local = 'http://localhost:5000';
     
   health(): Observable<string> {
