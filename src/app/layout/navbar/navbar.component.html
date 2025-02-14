@@ -1,104 +1,97 @@
 <!-- navbar.component.html -->
-<nav class="w-full h-15 py-2 bg-gradient-to-r from-blue-200 via-pink-200 to-blue-200 text-black flex justify-between items-center shadow-md">
+<nav class="w-full h-15 py-2 bg-white text-black flex justify-between items-center shadow-md">
     <!-- Logo -->
-    <div class="text-lg font-semibold">
+    <div class="text-lg font-bold text-[27px] text-[#9415d8] px-4">
       <a href="#">KOOKUR</a>
     </div>
-  
+
     <!-- Desktop Links -->
     <div class="hidden md:flex space-x-6">
       <a
         href="#"
-        class="relative px-3 py-2 rounded-md transition duration-300 hover:bg-gray-300 hover:text-black"
+        class="relative px-3 py-2 rounded-full border border-transparent transition duration-300 hover:border-[#9415d8] hover:text-[#9415d8]"
       >
         Home
       </a>
       <a
         href="/all-products"
-        class="relative px-3 py-2 rounded-md transition duration-300 hover:bg-gray-300 hover:text-black"
+        class="relative px-3 py-2 rounded-full border border-transparent transition duration-300 hover:border-[#9415d8] hover:text-[#9415d8]"
       >
         Shop
       </a>
       <a
         href="/player"
-        class="relative px-3 py-2 rounded-md transition duration-300  hover:bg-gray-300 hover:text-black"
+        class="relative px-3 py-2 rounded-full border border-transparent transition duration-300 hover:border-[#9415d8] hover:text-[#9415d8]"
       >
         Video
       </a>
       <a
         href="#"
-        class="relative px-3 py-2 rounded-md transition duration-300 hover:bg-gray-300 hover:text-black"
+        class="relative px-3 py-2 rounded-full border border-transparent transition duration-300 hover:border-[#9415d8] hover:text-[#9415d8]"
       >
         Games
       </a>
-
       <a
-      href="javascript:void(0)" 
-      (click)="onCartClick()"
-      class="relative px-3 py-2 rounded-md transition duration-300 hover:bg-gray-300 hover:text-black"
-    >
-      Cart
-    </a>
+        href="#"
+        class="relative px-3 py-2 rounded-full border border-transparent transition duration-300 hover:border-[#9415d8] hover:text-[#9415d8]"
+      >
+        About
+      </a>
+      <a
+        href="/signup"
+        class="px-4 py-2 bg-[#9415d8] text-white rounded-full transition duration-300 hover:bg-[#7b12b5]"
+      >
+        Login
+      </a>
+      <a
+        href="#"
+        class="px-4 py-2 border border-gray-400 text-[#9415d8] rounded-full transition duration-300 hover:bg-gray-100"
+      >
+        Signup
+      </a>
     </div>
-  
+
     <!-- Mobile Menu Icon -->
     <button class="md:hidden p-2 focus:outline-none" (click)="toggleMenu()">
       <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
       </svg>
     </button>
-  </nav>
-  
-  <!-- Mobile Menu -->
-  <div *ngIf="isMenuOpen" class="md:hidden bg-white shadow-lg">
-    <div class="flex flex-col p-4 space-y-2 text-center">
-      <a href="#" class="py-2 text-black hover:bg-gray-300 rounded-md transition duration-300 hover:text-black">
-        Home
-      </a>
-      <a  href="/player" class="py-2 text-black hover:bg-gray-300 rounded-md transition duration-300 hover:text-black">
-        Video
-      </a>
-      <a href="/all-products" class="py-2 text-black hover:bg-gray-300 rounded-md transition duration-300 hover:text-black">
-        Shop
-      </a>
-      <a href="#" class="py-2 text-black hover:bg-gray-300 rounded-md transition duration-300 hover:text-black">
-        Games
-      </a>
-    </div>
-  </div>
+</nav>
 
-
-  <div class="md:hidden fixed bottom-0 left-0 w-full bg-white-600 flex justify-around p-2 text-black">
-    <a href="#" class="hover:text-grey-300 flex flex-col items-center">
-      <!-- Home Icon -->
-      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M3 10.5L12 3l9 7.5V21a1 1 0 01-1 1h-5a1 1 0 01-1-1v-4a1 1 0 00-1-1h-4a1 1 0 00-1 1v4a1 1 0 01-1 1H4a1 1 0 01-1-1v-10.5z" />
-      </svg>
-      <span class="text-xs">Home</span>
-    </a>
-    <a  href="/player" class="hover:text-grey-300 flex flex-col items-center">
-      <!-- Shop Icon -->
-      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M16 11h-1V9a4 4 0 00-8 0v2H6a1 1 0 00-1 1v9a1 1 0 001 1h14a1 1 0 001-1v-9a1 1 0 00-1-1h-4zM8 9a2 2 0 014 0v2H8V9zm8 11H8v-6h8v6z" />
-      </svg>
-      <span class="text-xs">Video</span>
-    </a>
-    <a href="/all-products" class="hover:text-grey-300 flex flex-col items-center">
-      <!-- About Icon -->
-      <img
-      src="/assets/icons/shopping cart.svg"
-      alt="Shop"
-      class="w-6 h-6 mx-auto"
-    />
-      <span class="text-xs">Shop</span>
-    </a>
-    <a href="#" class="hover:text-grey-300 flex flex-col items-center">
-      <!-- Contact Icon -->
-      <img
-      src="/assets/icons/games-icon.svg"
-      alt="Games"
-      class="w-6 h-6 mx-auto"
-    />
-      <span class="text-xs">Games</span>
-    </a>
+<!-- Mobile Menu -->
+<div *ngIf="isMenuOpen" class="md:hidden bg-white shadow-lg">
+  <div class="flex flex-col p-4 space-y-2 text-center">
+    <a href="#" class="py-2 text-black hover:text-[#9415d8] hover:bg-gray-100 rounded-md transition duration-300">Home</a>
+    <a href="/player" class="py-2 text-black hover:text-[#9415d8] hover:bg-gray-100 rounded-md transition duration-300">Video</a>
+    <a href="/all-products" class="py-2 text-black hover:text-[#9415d8] hover:bg-gray-100 rounded-md transition duration-300">Shop</a>
+    <a href="#" class="py-2 text-black hover:text-[#9415d8] hover:bg-gray-100 rounded-md transition duration-300">Games</a>
+    <a href="#" class="py-2 text-black hover:text-[#9415d8] hover:bg-gray-100 rounded-md transition duration-300">About</a>
+    <a href="#" class="py-2 bg-[#9415d8] text-white rounded-md transition duration-300 hover:bg-[#7b12b5]">Login</a>
+    <a href="#" class="py-2 border border-gray-400 text-[#9415d8] rounded-md transition duration-300 hover:bg-gray-100">Signup</a>
   </div>
+</div>
+
+<!-- Mobile Bottom Navigation -->
+<!-- <div class="md:hidden fixed bottom-0 left-0 w-full bg-white flex justify-around p-2 text-black shadow-md">
+  <a href="#" class="hover:text-[#9415d8] flex flex-col items-center">
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M3 10.5L12 3l9 7.5V21a1 1 0 01-1 1h-5a1 1 0 01-1-1v-4a1 1 0 00-1-1h-4a1 1 0 00-1 1v4a1 1 0 01-1 1H4a1 1 0 01-1-1v-10.5z" />
+    </svg>
+    <span class="text-xs">Home</span>
+  </a>
+  <a href="/player" class="hover:text-[#9415d8] flex flex-col items-center">
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M16 11h-1V9a4 4 0 00-8 0v2H6a1 1 0 00-1 1v9a1 1 0 001 1h14a1 1 0 001-1v-9a1 1 0 00-1-1h-4zM8 9a2 2 0 014 0v2H8V9zm8 11H8v-6h8v6z" />
+    </svg>
+    <span class="text-xs">Video</span>
+  </a>
+  <a href="/all-products" class="hover:text-[#9415d8] flex flex-col items-center">
+    <img src="/assets/icons/shopping cart.svg" alt="Shop" class="w-6 h-6 mx-auto" />
+    <span class="text-xs">Shop</span>
+  </a>
+  <a href="#" class="hover:text-[#9415d8] flex flex-col items-center">
+    <img src="/assets/icons/games-icon.svg" alt="Games" class="w-6 h-6 mx-auto" />
+    <span class="text-xs">Games</span>
+  </a>
+</div> -->
