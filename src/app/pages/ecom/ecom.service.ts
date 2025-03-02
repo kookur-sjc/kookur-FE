@@ -10,7 +10,8 @@ export class EcomService {
 
   constructor(private http: HttpClient) {
    }
-   private apiUrl = 'http://localhost:5000';
+   private localUrl = 'http://localhost:5000';
+   private apiUrl = 'https://api.kookur.com';
 
    addNewItemWithImages(item: ItemInventory, files: File[]): void {
    
