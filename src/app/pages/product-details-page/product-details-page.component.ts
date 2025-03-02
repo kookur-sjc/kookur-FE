@@ -1,5 +1,5 @@
 import { Component, HostListener } from '@angular/core';
-import { ItemInventory } from '../../model';
+import { ItemInventory, Review } from '../../model';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EcomService } from '../ecom/ecom.service';
 import { HttpClientModule } from '@angular/common/http';
@@ -14,10 +14,19 @@ import { CognitoService } from '../../cognito.service';
   templateUrl: './product-details-page.component.html',
   styleUrl: './product-details-page.component.scss'
 })
+
 export class ProductDetailsPageComponent {
   product: ItemInventory | undefined ;
   currentImageIndex = 0;
   isDesktop: boolean = window.innerWidth >= 1024; 
+  reviews: Review[] = [{ user: 'Alice', rating: 5, comment: 'Amazing product!', date: '2024-02-28' },
+    { user: 'Bob', rating: 4, comment: 'Good quality but a bit pricey.', date: '2024-02-25' },
+    { user: 'Charlie', rating: 3, comment: 'Decent but not as expected.', date: '2024-02-20' },
+    { user: 'David', rating: 5, comment: 'Totally worth it!', date: '2024-02-18' },
+    { user: 'Eve', rating: 4, comment: 'Satisfied with my purchase.', date: '2024-02-15' }];
+
+
+  
 
   constructor(
     private route: ActivatedRoute,
@@ -38,6 +47,13 @@ export class ProductDetailsPageComponent {
       });
     });
   }
+  
+
+
+  trackByReview(index: number, review: Review) {
+    return review.user + review.date;
+  }
+
 
   previousImage(): void {
     if (this.currentImageIndex > 0) {

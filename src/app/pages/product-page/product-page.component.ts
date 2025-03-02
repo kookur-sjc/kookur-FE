@@ -18,6 +18,15 @@ export class ProductPageComponent implements OnInit {
 
   products: ItemInventory[] = [];
   images?: string[] = [];
+  filteredProducts: ItemInventory[] = [];
+
+
+  categories: string[] = ["Electronics", "Clothing", "Home", "Accessories"]; // Example categories
+  subCategories: string[] = [];
+
+  selectedCategory: string = "";
+  selectedSubCategory: string = "";
+
 
   constructor(private inventoryService: EcomService, private router: Router) {}
 
@@ -27,13 +36,61 @@ export class ProductPageComponent implements OnInit {
         ...product,
         images: product.imageUrl.split(',')
       }));
+      this.filteredProducts = [...this.products];
     });
   }
 
   viewProduct(id: number): void {
     this.router.navigate(['/products', id]);
   }
+  
+  filterByCategory(category: string): void {
+    this.selectedCategory = category;
+    this.selectedSubCategory = "";
 
+    if (category) {
+      this.filteredProducts = this.products.filter(product => product.category === category);
+      this.updateSubCategories(category);
+    } else {
+      this.filteredProducts = [...this.products];
+      this.subCategories = [];
+    }
+  }
+
+  // Filter by Sub-Category
+  filterBySubCategory(subCategory: string): void {
+    this.selectedSubCategory = subCategory;
+
+    if (subCategory) {
+      this.filteredProducts = this.products.filter(
+        product => product.category === this.selectedCategory && product.subCategory === subCategory
+      );
+    } else {
+      this.filterByCategory(this.selectedCategory);
+    }
+  }
+
+  // Reset Filters
+  resetFilters(): void {
+    this.selectedCategory = "";
+    this.selectedSubCategory = "";
+    this.filteredProducts = [...this.products];
+    this.subCategories = [];
+  }
+
+  // Update Sub-Categories dynamically based on selected category
+  updateSubCategories(category: string): void {
+    const subCategorySet = new Set<string>();
+    this.products
+      .filter(product => product.category === category)
+      .forEach(product => {
+        if (product.subCategory) {
+          subCategorySet.add(product.subCategory);
+        }
+      });
+    
+    this.subCategories = Array.from(subCategorySet);
+  }
  
   
 }

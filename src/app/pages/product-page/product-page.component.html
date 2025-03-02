@@ -1,33 +1,53 @@
-<div class="products-container px-4 py-8 max-w-screen-xl mx-auto">
-  <!-- <h2 class="text-3xl font-bold text-center mb-8 text-gray-800">Our Products</h2> -->
-  <div class="products-grid grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-    <!-- Product Card -->
+<div class="products-container px-6 py-12 max-w-screen-xl mx-auto bg-[#f3e5ff]"> 
+  <h2 class="text-4xl font-bold mb-10 text-[#440069] rounded-full text-center">Our Products</h2>
+
+  <!-- Filters Section -->
+  <div class="flex justify-center gap-4 mb-6">
+    <select class="px-4 py-2  rounded-2xl   bg-white text-black cursor-pointer">
+      <option value="">Select Category</option>
+      <option *ngFor="let category of categories" [value]="category">{{ category }}</option>
+    </select>
+    <select class="px-4 py-2 rounded-2xl bg-white text-black  cursor-pointer" [disabled]="!selectedCategory">
+      <option value="">Select Sub-Category</option>
+      <option *ngFor="let subCategory of subCategories" [value]="subCategory">{{ subCategory }}</option>
+    </select>
+  </div>
+
+  <!-- Product Grid -->
+  <div class="products-grid grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-8">
     <div
-      class="product-card bg-white shadow-lg rounded-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 cursor-pointer"
-      *ngFor="let product of products"
+      class="product-card bg-white shadow-lg rounded-2xl overflow-hidden hover:shadow-2xl transition-shadow duration-300 cursor-pointer border border-gray-200"
+      *ngFor="let product of filteredProducts"
       (click)="viewProduct(product.itemId)"
     >
-      <!-- Product Image -->
-      <div class="relative group">
+      <div class="relative group h-56 md:h-64 overflow-hidden">
         <img
-        [src]="product.images?.[0] || 'assets/default-image.jpg'"
-        alt="Primary Product Image"
-        class="w-full h-auto object-cover" 
-      />
+          [src]="product.images?.[0] || 'assets/default-image.jpg'"
+          alt="Primary Product Image"
+          class="w-full h-full object-cover transition-opacity duration-500 group-hover:opacity-0"
+        />
         <img
           *ngIf="product.images?.[1]"
           [src]="product.images?.[1] || 'assets/default-image.jpg'"
           alt="Secondary Product Image"
-          class="w-full h-auto object-cover absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+          class="w-full h-full object-cover absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
         />
       </div>
-      <!-- Product Details -->
-      <div class="p-4">
-        <h3 class="text-lg font-semibold text-gray-800 mb-2 truncate">
+      <div class="p-5">
+        <h3 class="text-xl font-semibold text-[#26003a] mb-2 truncate">
           {{ product.itemName }}
         </h3>
-        <p class="text-gray-800 text-sm mb-4">{{ product.itemDescription }}</p>
-        <p class="text-lg font-bold text-green-600">₹{{ product.pricePerUnit }}</p>
+        <p class="text-gray-800 text-sm mb-4 truncate">
+          {{ product.itemDescription }}
+        </p>
+        <div class="flex justify-between items-center">
+          <p class="text-lg font-bold text-[#26003a]">₹{{ product.pricePerUnit }}</p>
+          <button
+            class="bg-[#440069] text-white px-4 py-2 rounded-full text-sm hover:bg-[#7a0cb5] transition-colors duration-300"
+          >
+            View
+          </button>
+        </div>
       </div>
     </div>
   </div>
