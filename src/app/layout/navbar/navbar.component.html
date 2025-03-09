@@ -1,76 +1,68 @@
-<!-- navbar.component.html -->
 <nav class="w-full h-15 py-2 bg-white text-black flex justify-between items-center shadow-md">
-    <!-- Logo -->
-    <div class="text-lg font-bold text-[27px] text-[#9415d8] px-4">
+  <!-- Logo -->
+  <div class="text-lg font-bold text-[27px] text-[#9415d8] px-4">
       <a href="#">KOOKUR</a>
-    </div>
+  </div>
 
-    <!-- Desktop Links -->
-    <div class="hidden md:flex space-x-6">
-      <a
-        href="#"
-        class="relative px-3 py-2 rounded-full border border-transparent transition duration-300 hover:border-[#9415d8] hover:text-[#9415d8]"
-      >
-        Home
+  <!-- Desktop Links -->
+  <div class="hidden md:flex space-x-6">
+      <a href="#" class="relative px-3 py-2 rounded-full border border-transparent transition duration-300 hover:border-[#9415d8] hover:text-[#9415d8]">
+          Home
       </a>
-      <a
-        href="/all-products"
-        class="relative px-3 py-2 rounded-full border border-transparent transition duration-300 hover:border-[#9415d8] hover:text-[#9415d8]"
-      >
-        Shop
+      <a href="/all-products" *ngIf="!isProductPage" class="relative px-3 py-2 rounded-full border border-transparent transition duration-300 hover:border-[#9415d8] hover:text-[#9415d8]">
+          Shop
       </a>
-      <a
-        href="/player"
-        class="relative px-3 py-2 rounded-full border border-transparent transition duration-300 hover:border-[#9415d8] hover:text-[#9415d8]"
-      >
-        Video
+      <a href="/player" class="relative px-3 py-2 rounded-full border border-transparent transition duration-300 hover:border-[#9415d8] hover:text-[#9415d8]">
+          Video
       </a>
-      <a
-        href="#"
-        class="relative px-3 py-2 rounded-full border border-transparent transition duration-300 hover:border-[#9415d8] hover:text-[#9415d8]"
-      >
-        Games
+      <a href="#" class="relative px-3 py-2 rounded-full border border-transparent transition duration-300 hover:border-[#9415d8] hover:text-[#9415d8]">
+          Games
       </a>
-      <a
-        href="#"
-        class="relative px-3 py-2 rounded-full border border-transparent transition duration-300 hover:border-[#9415d8] hover:text-[#9415d8]"
-      >
-        About
+      <a href="#" class="relative px-3 py-2 rounded-full border border-transparent transition duration-300 hover:border-[#9415d8] hover:text-[#9415d8]">
+          About
       </a>
-      <a
-        href="/signup"
-        class="px-4 py-2 bg-[#9415d8] text-white rounded-full transition duration-300 hover:bg-[#7b12b5]"
-      >
-        Login
+      <a *ngIf="isProductPage" (click)="onCartClick()" class="px-4 py-2 bg-[#9415d8] text-white rounded-full transition duration-300 hover:bg-[#7b12b5]">
+          Cart
       </a>
-      <a
-        href="#"
-        class="px-4 py-2 border border-gray-400 text-[#9415d8] rounded-full transition duration-300 hover:bg-gray-100"
-      >
-        Signup
-      </a>
-    </div>
 
-    <!-- Mobile Menu Icon -->
-    <button class="md:hidden p-2 focus:outline-none" (click)="toggleMenu()">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-      </svg>
-    </button>
+      <a href="/signin" *ngIf="!isProductPage" class="px-4 py-2 bg-[#9415d8] text-white rounded-full transition duration-300 hover:bg-[#7b12b5]">
+          Login
+      </a>
+      <a href="/signup" *ngIf="!isProductPage" class="px-4 py-2 border border-gray-400 text-[#9415d8] rounded-full transition duration-300 hover:bg-gray-100">
+          Signup
+      </a>   
+  </div>
+
+  <!-- Mobile Menu and Cart Icon -->
+  <div class="md:hidden flex items-center space-x-4 order-last">
+      <a *ngIf="isProductPage" (click)="onCartClick()" class="px-4 py-2 bg-[#9415d8] text-white rounded-full transition duration-300 hover:bg-[#7b12b5]">
+          Cart
+      </a>
+      <button class="p-2 focus:outline-none" (click)="toggleMenu()">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+      </button>
+
+  </div>
 </nav>
+
 
 <!-- Mobile Menu -->
 <div *ngIf="isMenuOpen" class="md:hidden bg-white shadow-lg">
   <div class="flex flex-col p-4 space-y-2 text-center">
-    <a href="#" class="py-2 text-black hover:text-[#9415d8] hover:bg-gray-100 rounded-md transition duration-300">Home</a>
-    <a href="/player" class="py-2 text-black hover:text-[#9415d8] hover:bg-gray-100 rounded-md transition duration-300">Video</a>
-    <a href="/all-products" class="py-2 text-black hover:text-[#9415d8] hover:bg-gray-100 rounded-md transition duration-300">Shop</a>
-    <a href="#" class="py-2 text-black hover:text-[#9415d8] hover:bg-gray-100 rounded-md transition duration-300">Games</a>
-    <a href="#" class="py-2 text-black hover:text-[#9415d8] hover:bg-gray-100 rounded-md transition duration-300">About</a>
-    <a href="#" class="py-2 bg-[#9415d8] text-white rounded-md transition duration-300 hover:bg-[#7b12b5]">Login</a>
-    <a href="#" class="py-2 border border-gray-400 text-[#9415d8] rounded-md transition duration-300 hover:bg-gray-100">Signup</a>
+    <a href="#" class="py-2 text-black hover:text-[#9415d8] hover:bg-gray-100 rounded-full transition duration-300">Home</a>
+    <a href="/player" class="py-2 text-black hover:text-[#9415d8] hover:bg-gray-100 rounded-full transition duration-300">Video</a>
+    <a *ngIf="!isProductPage" href="/all-products" class="py-2 text-black hover:text-[#9415d8] hover:bg-gray-100 rounded-full  transition duration-300">Shop</a>
+    <a href="#" class="py-2 text-black hover:text-[#9415d8] hover:bg-gray-100 rounded-full  transition duration-300">Games</a>
+    <a href="#" class="py-2 text-black hover:text-[#9415d8] hover:bg-gray-100 rounded-full transition duration-300">About</a>
+    <a *ngIf="!isProductPage" href="/signin" class="py-2 bg-[#9415d8] text-white rounded-full  transition duration-300 hover:bg-[#7b12b5]">Login</a>
+    <a *ngIf="!isProductPage" href="/signup" class="py-2 border border-gray-400 text-[#9415d8] rounded-full  transition duration-300 hover:bg-gray-100">Signup</a>
   </div>
 </div>
+
+<!-- Mobile Menu Icon (Only when not on the product page) -->
+
 
 <!-- Mobile Bottom Navigation -->
 <!-- <div class="md:hidden fixed bottom-0 left-0 w-full bg-white flex justify-around p-2 text-black shadow-md">

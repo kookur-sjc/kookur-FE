@@ -13,6 +13,7 @@ import { CognitoService } from '../../cognito.service';
 })
 export class NavbarComponent {
   isMenuOpen = false;
+  isProductPage = false;
 
   constructor(
     private router: Router,
@@ -21,6 +22,12 @@ export class NavbarComponent {
   toggleMenu() {
     this.isMenuOpen = !this.isMenuOpen;
 
+  }
+
+  ngOnInit() {
+    this.router.events.subscribe(() => {
+      this.isProductPage = this.router.url.includes("product"); // Adjust the route accordingly
+    });
   }
 
   async onCartClick() {

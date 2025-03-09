@@ -18,7 +18,7 @@ export const routes: Routes = [
    {path: '', component: HomePageComponent},
    {path: 'player', component: VideoPlayerComponent},
    {path: 'auth', component: AuthComponent},
-   // {path: 'signin', component: SignInComponent},
+   {path: 'signin', component: SignInComponent},
    {path: 'signup', component: SignUpComponent},
    {path:'profile', component: ProfileComponent, canActivate: [AuthGuard]},
    {path: 'products/:id', component: ProductDetailsPageComponent},
