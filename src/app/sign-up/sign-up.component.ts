@@ -23,6 +23,7 @@ export class SignUpComponent {
   }
 
   public signUp(): void {
+    this.user.role = 'user';
     this.cognitoService
       .signUp(this.user)
       .then(() => {
@@ -35,6 +36,7 @@ export class SignUpComponent {
   }
 
   public confirmSignUp(): void {
+    this.user.role = 'user';
     this.cognitoService
       .confirmSignup(this.user)
       .then(() => {
