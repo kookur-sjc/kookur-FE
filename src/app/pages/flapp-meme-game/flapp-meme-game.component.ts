@@ -23,7 +23,13 @@ export class FlappMemeGameComponent implements OnInit, OnDestroy {
   
   constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
   
-  ngOnInit() {
+  async ngOnInit() {
+
+    if (typeof window !== 'undefined') {
+      const PhaserModule = await import('phaser');
+      this.Phaser = PhaserModule;
+      console.log(this.Phaser); // Now it will only log in the browser
+    }
     if (isPlatformBrowser(this.platformId)) {
       // Only import Phaser in the browser
       import('phaser').then(phaser => {
