@@ -18,7 +18,7 @@ interface PhaserTypes {
   styleUrl: './flapp-meme-game.component.scss'
 })
 export class FlappMemeGameComponent implements OnInit, OnDestroy {
-  private Phaser: PhaserTypes | null = null;
+  private Phaser: any = null;
   private game: any = null;
   
   constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
@@ -27,10 +27,25 @@ export class FlappMemeGameComponent implements OnInit, OnDestroy {
     if (isPlatformBrowser(this.platformId)) {
       console.log('Initializing Phaser in browser environment');
       
-      // Only import Phaser in the browser
-      import('phaser').then(phaser => {
+      // Import Phaser in the browser
+      import('phaser').then(phaserModule => {
         console.log('Phaser imported successfully');
-        this.Phaser = phaser;
+        
+        // Store the default export as Phaser
+        this.Phaser = phaserModule.default;
+        
+        // Ensure Phaser is properly loaded before initializing
+        if (!this.Phaser) {
+          console.error('Phaser not properly imported, checking for named exports');
+          // Try alternative approach if default export doesn't work
+          this.Phaser = phaserModule;
+        }
+        
+        // Verify Phaser is valid
+        if (!this.Phaser || !this.Phaser.Scene) {
+          console.error('Phaser Scene not found in imported module', this.Phaser);
+          return;
+        }
         
         // Small delay to ensure Phaser is fully initialized
         setTimeout(() => {
@@ -44,8 +59,8 @@ export class FlappMemeGameComponent implements OnInit, OnDestroy {
   }
   
   private initGame() {
-    if (!this.Phaser) {
-      console.error('Phaser not loaded');
+    if (!this.Phaser || !this.Phaser.Scene) {
+      console.error('Phaser not loaded correctly. Available properties:', Object.keys(this.Phaser || {}));
       return;
     }
     
@@ -59,8 +74,10 @@ export class FlappMemeGameComponent implements OnInit, OnDestroy {
     }
     
     try {
-      // Modern approach to creating a Phaser scene
-      class FlappyCatScene extends this.Phaser.Scene {
+      const self = this; // Store reference to this for use inside the class
+      
+      // Modern approach to creating a Phaser scene - use local reference to Phaser
+      class FlappyCatScene extends self.Phaser.Scene {
         cat: any;
         obstacles: any;
         dogImages: any;
@@ -78,6 +95,7 @@ export class FlappMemeGameComponent implements OnInit, OnDestroy {
           this.passedObstacles = new Set();
         }
         
+        // Rest of your scene code remains the same
         preload() {
           console.log('Preloading assets');
           
@@ -102,6 +120,9 @@ export class FlappMemeGameComponent implements OnInit, OnDestroy {
           
           console.log('Assets preload complete');
         }
+        
+        // The rest of your scene methods remain unchanged
+        // ...
         
         create() {
           console.log('Creating game scene');
@@ -318,6 +339,11 @@ export class FlappMemeGameComponent implements OnInit, OnDestroy {
       };
       
       console.log('Creating game with config');
+      
+      // Add additional debug logging
+      console.log('Phaser Game constructor:', this.Phaser.Game);
+      
+      // Create new game instance
       this.game = new this.Phaser.Game(config);
       console.log('Game created successfully');
       
