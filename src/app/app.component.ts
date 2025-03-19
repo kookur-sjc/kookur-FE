@@ -19,6 +19,7 @@ export class AppComponent {
   constructor(private router: Router) {
     this.router.events.subscribe(() => {
       this.showFooter = !this.router.url.includes('/player');
+      this.showFooter = !this.router.url.includes('/flapp');
     });
   }
 }

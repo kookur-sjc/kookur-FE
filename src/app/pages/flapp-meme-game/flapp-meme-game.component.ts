@@ -87,6 +87,18 @@ export class FlappMemeGameComponent implements OnInit, OnDestroy {
         scoreText: any;
         passedObstacles: Set<any>;
         catEmotionTimer: any;
+        loadingText: any;
+         gameWidth: number = 800;  // Add this line
+        gameHeight: number = 600; 
+        
+        // Audio variables
+        catFlapSound: any;
+        catHappySound: any;
+        catSadSound: any;
+        dogWaitingSound: any;
+        dogCryingSound: any;
+        dogHappySound: any;
+        gameOverSound: any;
         
         constructor() {
           super({ key: 'FlappyCatScene' });
@@ -95,13 +107,45 @@ export class FlappMemeGameComponent implements OnInit, OnDestroy {
           this.passedObstacles = new Set();
         }
         
-        // Rest of your scene code remains the same
         preload() {
           console.log('Preloading assets');
+          
+          // Create loading text
+          this.loadingText = this['add'].text(
+            this['game'].config.width / 2, 
+            this['game'].config.height / 2, 
+            'Loading game...', 
+            { 
+              fontSize: '32px', 
+              color: '#ffffff',
+              stroke: '#000000',
+              strokeThickness: 4
+            }
+          ).setOrigin(0.5);
+          
+          // Add loading progress bar
+          const progressBar = this['add'].graphics();
+          const progressBox = this['add'].graphics();
+          progressBox.fillStyle(0x222222, 0.8);
+          progressBox.fillRect(240, 270, 320, 50);
+          
+          // Add loading progress event
+          this['load'].on('progress', function (value: number) {
+            progressBar.clear();
+            progressBar.fillStyle(0xffffff, 1);
+            progressBar.fillRect(250, 280, 300 * value, 30);
+          });
           
           // Add error handler for asset loading
           this['load'].on('loaderror', (fileObj: any) => {
             console.error('Error loading asset:', fileObj.src);
+          });
+          
+          // Add complete handler
+          this['load'].on('complete', () => {
+            progressBar.destroy();
+            progressBox.destroy();
+            this.loadingText.destroy();
           });
           
           // Load cat meme sprites with absolute paths
@@ -118,18 +162,40 @@ export class FlappMemeGameComponent implements OnInit, OnDestroy {
           // Game assets
           this['load'].image('background', './assets/images/background.jpg');
           
+          // Load audio files
+          this['load'].audio('cat-flap', './assets/audio/test.mp3');
+          this['load'].audio('cat-happy', './assets/audio/test.mp3');
+          this['load'].audio('cat-sad', './assets/audio/test.mp3');
+          this['load'].audio('dog-waiting', './assets/audio/test.mp3');
+          this['load'].audio('dog-crying', './assets/audio/test.mp3');
+          this['load'].audio('dog-happy', './assets/audio/test.mp3');
+          this['load'].audio('game-over', './assets/audio/test.mp3');
+          
           console.log('Assets preload complete');
         }
-        
-        // The rest of your scene methods remain unchanged
-        // ...
         
         create() {
           console.log('Creating game scene');
           
-          // Add background
-          this['add'].image(400, 300, 'background');
+          // Get game dimensions for responsive sizing
+          this.gameWidth = this['game'].config.width;
+          this.gameHeight = this['game'].config.height;
           
+          // Create audio objects
+          this.catFlapSound = this['sound'].add('cat-flap');
+          this.catHappySound = this['sound'].add('cat-happy');
+          this.catSadSound = this['sound'].add('cat-sad');
+          this.dogWaitingSound = this['sound'].add('dog-waiting');
+          this.dogCryingSound = this['sound'].add('dog-crying');
+          this.dogHappySound = this['sound'].add('dog-happy');
+          this.gameOverSound = this['sound'].add('game-over');
+          
+          const background = this['add'].image(this.gameWidth / 2, this.gameHeight / 2, 'background');
+background.setDisplaySize(this.gameWidth, this.gameHeight);
+background.setScale(
+  Math.max(this.gameWidth / background.width, this.gameHeight / background.height)
+);
+// bg.setDisplaySize(this.gameWidth + 10, this.gameHeight + 10);
           // Create obstacles group
           this.obstacles = this['physics'].add.group({
             allowGravity: false,
@@ -140,8 +206,12 @@ export class FlappMemeGameComponent implements OnInit, OnDestroy {
           this.dogImages = this['add'].group();
           
           // Create cat sprite - adjust size for GIF
-          this.cat = this['physics'].add.sprite(150, 300, 'cat-normal');
+          this.cat = this['physics'].add.sprite(150, this.gameHeight / 2, 'cat-normal');
           this.cat.setCollideWorldBounds(true);
+          
+          // Set cat to die when touching world bounds
+          this.cat.body.onWorldBounds = true;
+          this['physics'].world.on('worldbounds', this.hitWorldBounds, this);
           
           // Scale the cat to appropriate size (adjust based on your GIF size)
           this.cat.setScale(0.15);
@@ -151,7 +221,12 @@ export class FlappMemeGameComponent implements OnInit, OnDestroy {
           this.cat.body.setOffset(this.cat.width * 0.2, this.cat.height * 0.2);
           
           // Add score text
-          this.scoreText = this['add'].text(16, 16, 'Score: 0', { fontSize: '32px', color: '#fff' });
+          this.scoreText = this['add'].text(16, 16, 'Score: 0', { 
+            fontSize: '32px', 
+            color: '#fff',
+            stroke: '#000',
+            strokeThickness: 4
+          });
           
           // Create obstacle timer
           this['time'].addEvent({
@@ -172,7 +247,7 @@ export class FlappMemeGameComponent implements OnInit, OnDestroy {
           // Setup collision detection
           this['physics'].add.collider(this.cat, this.obstacles, this.hitObstacle, null, this);
           
-          this.restartButton = this['add'].image(400, 400, 'restart-btn')
+          this.restartButton = this['add'].image(this.gameWidth / 2, this.gameHeight / 2 + 100, 'restart-btn')
             .setInteractive()
             .on('pointerdown', () => {
               this['scene'].restart();
@@ -183,6 +258,35 @@ export class FlappMemeGameComponent implements OnInit, OnDestroy {
             .setScale(0.5);
           
           console.log('Game scene created');
+          
+          // Handle resize events
+          this.handleResize();
+          window.addEventListener('resize', () => this.handleResize());
+        }
+        
+        handleResize() {
+          // Get window dimensions
+          const width = window.innerWidth;
+          const height = window.innerHeight;
+          
+          // Calculate the scale factor
+          const scaleX = width / this.gameWidth;
+          const scaleY = height / this.gameHeight;
+          const scale = Math.min(scaleX, scaleY);
+          
+          // Apply the scale to the game
+          if (this['game'].scale) {
+            this['game'].scale.setGameSize(this.gameWidth * scale, this.gameHeight * scale);
+            this['game'].scale.setZoom(scale);
+          }
+        }
+        
+        hitWorldBounds() {
+          // End game when cat hits world bounds
+          if (!this.gameOver) {
+            this.gameOver = true;
+            this.handleGameOver();
+          }
         }
         
         update(time: number, delta: number) {
@@ -209,10 +313,13 @@ export class FlappMemeGameComponent implements OnInit, OnDestroy {
               const dogs = this.dogImages.getChildren();
               if (dogIndex !== -1 && dogs[dogIndex]) {
                 dogs[dogIndex].setTexture('dog-crying');
+                this.dogCryingSound.play();
               }
               
               // Make cat happy temporarily
               this.cat.setTexture('cat-happy');
+              this.catHappySound.play();
+              
               if (this.catEmotionTimer) this.catEmotionTimer.remove();
               this.catEmotionTimer = this['time'].delayedCall(500, () => {
                 if (!this.gameOver && this.cat) this.cat.setTexture('cat-normal');
@@ -239,56 +346,88 @@ export class FlappMemeGameComponent implements OnInit, OnDestroy {
           
           // Apply upward velocity to make the cat "flap"
           this.cat.body.velocity.y = -350;
+          
+          // Play flap sound
+          this.catFlapSound.play();
         }
         
         addObstacleWithDog() {
           if (this.gameOver) return;
           
-          const availableHeight = 600;
+          const availableHeight = this.gameHeight;
           const obstacleWidth = 80;
-          const gapSize = 200; // Larger gap for bigger sprites
+          const gapSize = 300; // Larger gap for bigger sprites
           
           // Calculate random gap position
           const gapStart = Math.floor(Math.random() * (availableHeight - gapSize - 100)) + 50;
           const gapEnd = gapStart + gapSize;
           
-          // Create top rectangle obstacle
-          const topObstacle = this.obstacles.create(800, gapStart / 2, null);
-          topObstacle.body.setSize(obstacleWidth/4, gapStart/4);
-          topObstacle.setVelocityX(-200);
+          // Create top rectangle obstacle with visible graphics
+          const topObstacle = this['add'].rectangle(
+            800, 
+            gapStart / 2, 
+            obstacleWidth, 
+            gapStart, 
+            0x00000, 
+            0.7
+          );
+          this.obstacles.add(topObstacle);
+          this['physics'].add.existing(topObstacle, true);
+          topObstacle.body.setVelocityX(-200);
           topObstacle.scored = false;
-          topObstacle.visible = false; // Use visible instead of alpha
           
-          // Create bottom rectangle obstacle
-          const bottomObstacle = this.obstacles.create(800, gapEnd + (availableHeight - gapEnd) / 2, null);
-          bottomObstacle.body.setSize(obstacleWidth, availableHeight - gapEnd);
-          bottomObstacle.setVelocityX(-200);
+          // Create bottom rectangle obstacle with visible graphics
+          const bottomObstacle = this['add'].rectangle(
+            800, 
+            gapEnd + (availableHeight - gapEnd) / 2, 
+            obstacleWidth, 
+            availableHeight - gapEnd, 
+            0x00000   , 
+            0.7  
+          );
+          this.obstacles.add(bottomObstacle);
+          this['physics'].add.existing(bottomObstacle, true);
+          bottomObstacle.body.setVelocityX(-200);
           bottomObstacle.scored = false;
-          bottomObstacle.visible = false; // Use visible instead of alpha
           
           // Add dog at the end of top obstacle (waiting dog)
-          const topDog = this['add'].sprite(800 + obstacleWidth/2, gapStart - 40, 'dog-waiting');
+          const topDog = this['add'].sprite(800, gapStart - 40, 'dog-waiting');
           topDog.setScale(0.12); // Adjust scale based on your GIF size
           topDog.setOrigin(0.5, 1);
           this.dogImages.add(topDog);
           
-          const bottomDog = this['add'].sprite(800 + obstacleWidth/4, gapEnd + 40, 'dog-waiting');
+          const bottomDog = this['add'].sprite(800, gapEnd + 40, 'dog-waiting');
           bottomDog.setScale(0.12); // Adjust scale based on your GIF size
           bottomDog.setOrigin(0.5, 0);
           this.dogImages.add(bottomDog);
           
+          // Play dog waiting sound
+          this.dogWaitingSound.play();
+          
           // Add tweens to move the dogs
           this['tweens'].add({
-              targets: [topDog, bottomDog],
-              x: -100,
-              duration: 5000,
-              ease: 'Linear'
+            targets: [topDog, bottomDog],
+            x: -100,
+            duration: 5000,
+            ease: 'Linear'
+          });
+          
+          // Add tweens to move the obstacles
+          this['tweens'].add({
+            targets: [topObstacle, bottomObstacle],
+            x: -100,
+            duration: 5000,
+            ease: 'Linear'
           });
         }
         
         hitObstacle() {
-          if (!this.cat) return;
+          if (!this.cat || this.gameOver) return;
           
+          this.handleGameOver();
+        }
+        
+        handleGameOver() {
           this['physics'].pause();
           this.gameOver = true;
           
@@ -297,14 +436,21 @@ export class FlappMemeGameComponent implements OnInit, OnDestroy {
           
           // Change cat to sad
           this.cat.setTexture('cat-sad');
+          this.catSadSound.play();
+          
+          // Play game over sound
+          this.gameOverSound.play();
           
           // Change any visible dogs to happy
           this.dogImages.getChildren().forEach((dog: any) => {
             dog.setTexture('dog-happy');
           });
           
+          // Play dog happy sound
+          this.dogHappySound.play();
+          
           // Add game over text
-          this['add'].text(400, 300, 'Game Over', { 
+          this['add'].text(this.gameWidth / 2, this.gameHeight / 2, 'Game Over', { 
             fontSize: '64px', 
             color: '#fff',
             stroke: '#000',
@@ -335,13 +481,17 @@ export class FlappMemeGameComponent implements OnInit, OnDestroy {
             debug: false
           }
         },
+        scale: {
+          mode: this.Phaser.Scale.FIT,
+          autoCenter: this.Phaser.Scale.CENTER_BOTH,
+          width: 610,
+          height: 600,
+          parent: 'game-container'
+        },
         scene: [FlappyCatScene]
       };
       
-      console.log('Creating game with config');
-      
-      // Add additional debug logging
-      console.log('Phaser Game constructor:', this.Phaser.Game);
+      console.log('Creating game with config:', config);
       
       // Create new game instance
       this.game = new this.Phaser.Game(config);
@@ -356,6 +506,9 @@ export class FlappMemeGameComponent implements OnInit, OnDestroy {
     console.log('Destroying game');
     if (this.game) {
       this.game.destroy(true);
+      
+      // Remove any event listeners
+      window.removeEventListener('resize', () => {});
     }
   }
 }
