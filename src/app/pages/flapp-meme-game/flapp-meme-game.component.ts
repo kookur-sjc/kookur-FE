@@ -346,7 +346,7 @@ background.setScale(
           if (this.gameOver || !this.cat) return;
           
           // Apply upward velocity to make the cat "flap"
-          this.cat.body.velocity.y = -350;
+          this.cat.body.velocity.y = -280;
           
           // Play flap sound
           this.catFlapSound.play();

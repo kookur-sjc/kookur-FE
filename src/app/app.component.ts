@@ -16,10 +16,12 @@ import { NgIf } from '@angular/common';
 export class AppComponent {
   title = 'kookur-FE';
   showFooter = true;
+  showNavbar = true;
   constructor(private router: Router) {
     this.router.events.subscribe(() => {
       this.showFooter = !this.router.url.includes('/player');
       this.showFooter = !this.router.url.includes('/flapp');
+      this.showNavbar = !this.router.url.includes('/flapp');
     });
   }
 }
