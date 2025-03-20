@@ -88,8 +88,8 @@ export class FlappMemeGameComponent implements OnInit, OnDestroy {
         passedObstacles: Set<any>;
         catEmotionTimer: any;
         loadingText: any;
-         gameWidth: number = 800;  // Add this line
-        gameHeight: number = 600; 
+        gameWidth: number = 360;  // Update this line
+        gameHeight: number = 640; // Update this line
         
         // Audio variables
         catFlapSound: any;
@@ -206,7 +206,8 @@ background.setScale(
           this.dogImages = this['add'].group();
           
           // Create cat sprite - adjust size for GIF
-          this.cat = this['physics'].add.sprite(150, this.gameHeight / 2, 'cat-normal');
+          // In the create method
+          this.cat = this['physics'].add.sprite(this.gameWidth / 2, this.gameHeight / 2, 'cat-normal');
           this.cat.setCollideWorldBounds(true);
           
           // Set cat to die when touching world bounds
@@ -222,15 +223,15 @@ background.setScale(
           
           // Add score text
           this.scoreText = this['add'].text(16, 16, 'Score: 0', { 
-            fontSize: '32px', 
+            fontSize: '24px',  // Reduced from 32px
             color: '#fff',
             stroke: '#000',
-            strokeThickness: 4
+            strokeThickness: 3  // Reduced from 4
           });
           
           // Create obstacle timer
           this['time'].addEvent({
-            delay: 2000, // Increased delay for bigger sprites
+            delay: 2500, // Increased delay for bigger sprites
             callback: this.addObstacleWithDog,
             callbackScope: this,
             loop: true
@@ -247,15 +248,15 @@ background.setScale(
           // Setup collision detection
           this['physics'].add.collider(this.cat, this.obstacles, this.hitObstacle, null, this);
           
-          this.restartButton = this['add'].image(this.gameWidth / 2, this.gameHeight / 2 + 100, 'restart-btn')
-            .setInteractive()
-            .on('pointerdown', () => {
-              this['scene'].restart();
-              this.gameOver = false;
-              this.score = 0;
-            })
-            .setVisible(false)
-            .setScale(0.5);
+          this.restartButton = this['add'].image(this.gameWidth / 2, this.gameHeight / 2, 'restart-btn')
+          .setInteractive()
+          .on('pointerdown', () => {
+            this['scene'].restart();
+            this.gameOver = false;
+            this.score = 0;
+          })
+          .setVisible(false)
+          .setScale(0.3);
           
           console.log('Game scene created');
           
@@ -355,8 +356,8 @@ background.setScale(
           if (this.gameOver) return;
           
           const availableHeight = this.gameHeight;
-          const obstacleWidth = 80;
-          const gapSize = 300; // Larger gap for bigger sprites
+          const obstacleWidth = 60;
+          const gapSize = 220;  // Larger gap for bigger sprites
           
           // Calculate random gap position
           const gapStart = Math.floor(Math.random() * (availableHeight - gapSize - 100)) + 50;
@@ -450,11 +451,11 @@ background.setScale(
           this.dogHappySound.play();
           
           // Add game over text
-          this['add'].text(this.gameWidth / 2, this.gameHeight / 2, 'Game Over', { 
-            fontSize: '64px', 
+          this['add'].text(this.gameWidth / 2, this.gameHeight / 3, 'Game Over', {  // Position at top third
+            fontSize: '40px',  // Reduced from 64px
             color: '#fff',
             stroke: '#000',
-            strokeThickness: 6
+            strokeThickness: 4  // Reduced from 6
           }).setOrigin(0.5);
           
           this.restartButton.setVisible(true);
@@ -471,8 +472,8 @@ background.setScale(
       // Configure the game with the scene
       const config = {
         type: this.Phaser.AUTO,
-        width: 800,
-        height: 600,
+        width: 360,  // Standard mobile width
+        height: 640, // Gives us approximately 16:9 ratio
         parent: 'game-container',
         physics: {
           default: 'arcade',
@@ -482,10 +483,10 @@ background.setScale(
           }
         },
         scale: {
-          mode: this.Phaser.Scale.FIT,
+          mode: this.Phaser.Scale.FIT ,  // Change from FIT to RESIZE
           autoCenter: this.Phaser.Scale.CENTER_BOTH,
-          width: 610,
-          height: 600,
+          width: 360,
+          height: 640,
           parent: 'game-container'
         },
         scene: [FlappyCatScene]
