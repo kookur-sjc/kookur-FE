@@ -79,6 +79,8 @@ export class FlappMemeGameComponent implements OnInit, OnDestroy {
       // Modern approach to creating a Phaser scene - use local reference to Phaser
       class FlappyCatScene extends self.Phaser.Scene {
         cat: any;
+        catWings: any[] = []; // Left and right wings
+        catHalo: any; // Angel ring/halo
         obstacles: any;
         dogImages: any;
         restartButton: any;
@@ -88,8 +90,16 @@ export class FlappMemeGameComponent implements OnInit, OnDestroy {
         passedObstacles: Set<any>;
         catEmotionTimer: any;
         loadingText: any;
-        gameWidth: number = 360;  // Update this line
-        gameHeight: number = 640; // Update this line
+        gameWidth: number = 360;
+        gameHeight: number = 640;
+        
+        // Background elements for motion illusion
+        clouds: any[] = [];
+        floor: any;
+        
+        // Game over elements
+        gameOverGif: any;
+        gameOverShakeTween: any;
         
         // Audio variables
         catFlapSound: any;
@@ -153,14 +163,25 @@ export class FlappMemeGameComponent implements OnInit, OnDestroy {
           this['load'].image('cat-happy', './assets/images/cat-happy.gif');
           this['load'].image('cat-sad', './assets/images/cat-sad.gif');
           
+          // Load wing and halo assets
+          this['load'].image('wing-left', './assets/images/wing-left.png');
+          this['load'].image('wing-right', './assets/images/wing-right.png');
+          this['load'].image('halo', './assets/images/halo.png');
+          
           // Load dog meme sprites
-          this['load'].image('dog-waiting', './assets/images/dog-waiting.jpg');
+          this['load'].image('dog-waiting', './assets/images/dog-waiting.png');
           this['load'].image('dog-crying', './assets/images/dog-sad.gif');
           this['load'].image('dog-happy', './assets/images/dog-happy.gif');
           this['load'].image('restart-btn', './assets/images/restart-button.png');
           
           // Game assets
           this['load'].image('background', './assets/images/background.jpg');
+          this['load'].image('cloud', './assets/images/cloud.png');
+          this['load'].image('floor', './assets/images/ground.png');
+          this['load'].image('pipe', './assets/images/pipe.png'); // Load pipe image
+          
+          // Load game over GIF instead of video
+          this['load'].image('game-over-gif', './assets/images/dog-happy.gif');
           
           // Load audio files
           this['load'].audio('cat-flap', './assets/audio/test.mp3');
@@ -169,7 +190,7 @@ export class FlappMemeGameComponent implements OnInit, OnDestroy {
           this['load'].audio('dog-waiting', './assets/audio/test.mp3');
           this['load'].audio('dog-crying', './assets/audio/test.mp3');
           this['load'].audio('dog-happy', './assets/audio/test.mp3');
-          this['load'].audio('game-over', './assets/audio/test.mp3');
+          this['load'].audio('game-over', './assets/audio/game-over-audio.mp3');
           
           console.log('Assets preload complete');
         }
@@ -190,51 +211,67 @@ export class FlappMemeGameComponent implements OnInit, OnDestroy {
           this.dogHappySound = this['sound'].add('dog-happy');
           this.gameOverSound = this['sound'].add('game-over');
           
+          // Set up layers with proper depth
+          // Background (lowest depth)
           const background = this['add'].image(this.gameWidth / 2, this.gameHeight / 2, 'background');
-background.setDisplaySize(this.gameWidth, this.gameHeight);
-background.setScale(
-  Math.max(this.gameWidth / background.width, this.gameHeight / background.height)
-);
-// bg.setDisplaySize(this.gameWidth + 10, this.gameHeight + 10);
-          // Create obstacles group
+          background.setDisplaySize(this.gameWidth, this.gameHeight);
+          background.setScale(
+            Math.max(this.gameWidth / background.width, this.gameHeight / background.height)
+          );
+          background.setDepth(0);
+          
+          // Add clouds with lower depth
+          this.createClouds();
+          
+          // Create obstacles group - higher depth than clouds
           this.obstacles = this['physics'].add.group({
             allowGravity: false,
             immovable: true
           });
           
-          // Create dog images group (not physics objects, just for visuals)
+          // Create dog images group - higher depth than obstacles
           this.dogImages = this['add'].group();
           
-          // Create cat sprite - adjust size for GIF
-          // In the create method
+          // Add moving floor - above clouds but below obstacles and dogs
+          this.createMovingFloor();
+          
+          // Create cat sprite - highest depth for gameplay elements
           this.cat = this['physics'].add.sprite(this.gameWidth / 2, this.gameHeight / 2, 'cat-normal');
           this.cat.setCollideWorldBounds(true);
+          this.cat.setDepth(30);
           
           // Set cat to die when touching world bounds
           this.cat.body.onWorldBounds = true;
           this['physics'].world.on('worldbounds', this.hitWorldBounds, this);
           
-          // Scale the cat to appropriate size (adjust based on your GIF size)
+          // Scale the cat to appropriate size
           this.cat.setScale(0.15);
           
           // Adjust the hitbox of the cat to be smaller than the image
           this.cat.body.setSize(this.cat.width * 0.6, this.cat.height * 0.6);
           this.cat.body.setOffset(this.cat.width * 0.2, this.cat.height * 0.2);
           
-          // Add score text
+          // Add wings and halo to the cat
+          // this.addCatWingsAndHalo();
+          
+          // Add score text - highest depth
           this.scoreText = this['add'].text(16, 16, 'Score: 0', { 
-            fontSize: '24px',  // Reduced from 32px
+            fontSize: '24px',
             color: '#fff',
             stroke: '#000',
-            strokeThickness: 3  // Reduced from 4
-          });
+            strokeThickness: 3
+          }).setDepth(50);
           
-          // Create obstacle timer
+          // Add initial obstacle immediately
+          this.addObstacleWithDog();
+          
+          // Create obstacle timer for subsequent obstacles
           this['time'].addEvent({
-            delay: 2500, // Increased delay for bigger sprites
+            delay: 2500,
             callback: this.addObstacleWithDog,
             callbackScope: this,
-            loop: true
+            loop: true,
+            startAt: 500 // Start sooner to add obstacles faster
           });
           
           // Setup input - both mouse/touch and keyboard
@@ -248,6 +285,12 @@ background.setScale(
           // Setup collision detection
           this['physics'].add.collider(this.cat, this.obstacles, this.hitObstacle, null, this);
           
+          // Create game over GIF (hidden initially)
+          this.gameOverGif = this['add'].image(this.gameWidth / 2, this.gameHeight / 2, 'game-over-gif');
+          this.gameOverGif.setVisible(false);
+          this.gameOverGif.setScale(0.1); // Start small for growth animation
+          this.gameOverGif.setDepth(90); // Very high depth to appear above everything
+          
           this.restartButton = this['add'].image(this.gameWidth / 2, this.gameHeight / 2, 'restart-btn')
           .setInteractive()
           .on('pointerdown', () => {
@@ -256,7 +299,8 @@ background.setScale(
             this.score = 0;
           })
           .setVisible(false)
-          .setScale(0.3);
+          .setScale(0.3)
+          .setDepth(100); // Ensure restart button is above everything
           
           console.log('Game scene created');
           
@@ -264,6 +308,81 @@ background.setScale(
           this.handleResize();
           window.addEventListener('resize', () => this.handleResize());
         }
+        
+        createClouds() {
+          // Create multiple clouds at different depths for parallax effect
+          for (let i = 0; i < 5; i++) {
+            const y = Math.random() * (this.gameHeight * 0.5);
+            const x = Math.random() * this.gameWidth;
+            const scale = 0.3 + Math.random() * 0.4; // Random scale between 0.3 and 0.7
+            const speed = 0.5 + Math.random() * 1.5; // Random speed
+            
+            const cloud = this['add'].image(x, y, 'cloud');
+            cloud.setScale(scale);
+            cloud.speed = speed;
+            cloud.setAlpha(0.7); // Slightly transparent
+            cloud.setDepth(5); // Set lower depth for clouds so they appear behind other elements
+            
+            this.clouds.push(cloud);
+          }
+        }
+        
+        createMovingFloor() {
+          // Create a tiled floor that moves to create scrolling effect
+          this.floor = this['add'].tileSprite(
+            this.gameWidth / 2,
+            this.gameHeight - 30,
+            this.gameWidth * 2,
+            60,
+            'floor'
+          );
+          this.floor.setDepth(10); // Set depth to be above clouds but below obstacles
+        }
+        
+        // addCatWingsAndHalo() {
+        //   // Add left wing
+        //   const leftWing = this['add'].image(0, 0, 'wing-left');
+        //   leftWing.setScale(0.1);
+        //   leftWing.setOrigin(1, 0.5);
+        //   this.catWings.push(leftWing);
+          
+        //   // Add right wing
+        //   const rightWing = this['add'].image(0, 0, 'wing-right');
+        //   rightWing.setScale(0.1);
+        //   rightWing.setOrigin(0, 0.5);
+        //   this.catWings.push(rightWing);
+          
+        //   // Add halo
+        //   this.catHalo = this['add'].image(0, 0, 'halo');
+        //   this.catHalo.setScale(0.1);
+        //   this.catHalo.setOrigin(0.5, 1);
+          
+        //   // Create flapping animation for wings
+        //   this.createWingAnimation();
+        // }
+        
+        // createWingAnimation() {
+        //   // Create animation for wings flapping
+        //   this['tweens'].add({
+        //     targets: this.catWings,
+        //     scaleX: { from: 0.1, to: 0.12 },
+        //     scaleY: { from: 0.1, to: 0.12 },
+        //     duration: 200,
+        //     yoyo: true,
+        //     repeat: -1,
+        //     ease: 'Sine.easeInOut'
+        //   });
+          
+        //   // Create subtle animation for halo
+        //   this['tweens'].add({
+        //     targets: this.catHalo,
+        //     y: '-=3',
+        //     duration: 1000,
+        //     yoyo: true,
+        //     repeat: -1,
+        //     ease: 'Sine.easeInOut'
+        //   });
+        // }
         
         handleResize() {
           // Get window dimensions
@@ -301,6 +420,15 @@ background.setScale(
           } else {
             this.cat.angle = -15;
           }
+          
+          // Update wings and halo positions to follow cat
+          // this.updateWingsAndHalo();
+          
+          // Update clouds position for parallax effect
+          this.updateClouds();
+          
+          // Update floor position
+          this.updateFloor();
           
           // Check for obstacle passing
           this.obstacles.getChildren().forEach((obstacle: any) => {
@@ -342,6 +470,44 @@ background.setScale(
           });
         }
         
+        // updateWingsAndHalo() {
+        //   // Position wings and halo relative to cat
+        //   if (this.cat && this.catWings.length === 2 && this.catHalo) {
+        //     // Left wing position
+        //     this.catWings[0].x = this.cat.x - (this.cat.width * 0.15 * 0.2);
+        //     this.catWings[0].y = this.cat.y;
+        //     this.catWings[0].angle = this.cat.angle;
+            
+        //     // Right wing position
+        //     this.catWings[1].x = this.cat.x + (this.cat.width * 0.15 * 0.2);
+        //     this.catWings[1].y = this.cat.y;
+        //     this.catWings[1].angle = this.cat.angle;
+            
+        //     // Halo position
+        //     this.catHalo.x = this.cat.x;
+        //     this.catHalo.y = this.cat.y - (this.cat.height * 0.15 * 0.4);
+        //     this.catHalo.angle = this.cat.angle * 0.3; // Subtle angle change
+        //   }
+        // }
+        
+        updateClouds() {
+          // Move clouds for parallax effect
+          this.clouds.forEach(cloud => {
+            cloud.x -= cloud.speed;
+            
+            // Reset cloud position when it goes off screen
+            if (cloud.x < -cloud.width) {
+              cloud.x = this.gameWidth + cloud.width;
+              cloud.y = Math.random() * (this.gameHeight * 0.5);
+            }
+          });
+        }
+        
+        updateFloor() {
+          // Update floor tilePosition to create scrolling effect
+          this.floor.tilePositionX += 2;
+        }
+        
         flapCat() {
           if (this.gameOver || !this.cat) return;
           
@@ -350,6 +516,18 @@ background.setScale(
           
           // Play flap sound
           this.catFlapSound.play();
+          
+          // Additional wing flap animation
+          // this.catWings.forEach(wing => {
+          //   this['tweens'].add({
+          //     targets: wing,
+          //     scaleX: { from: 0.12, to: 0.15 },
+          //     scaleY: { from: 0.12, to: 0.15 },
+          //     duration: 100,
+          //     yoyo: true,
+          //     ease: 'Sine.easeInOut'
+          //   });
+          // });
         }
         
         addObstacleWithDog() {
@@ -363,29 +541,28 @@ background.setScale(
           const gapStart = Math.floor(Math.random() * (availableHeight - gapSize - 100)) + 50;
           const gapEnd = gapStart + gapSize;
           
-          // Create top rectangle obstacle with visible graphics
-          const topObstacle = this['add'].rectangle(
+          // Create top pipe obstacle with visible pipe image
+          const topObstacle = this['add'].image(
             800, 
             gapStart / 2, 
-            obstacleWidth, 
-            gapStart, 
-            0x00000, 
-            0.7
+            'pipe'
           );
+          topObstacle.setDisplaySize(obstacleWidth, gapStart);
+          topObstacle.setFlipY(true); // Flip the top pipe
+          topObstacle.setDepth(15); // Set depth to be above floor but below dogs
           this.obstacles.add(topObstacle);
           this['physics'].add.existing(topObstacle, true);
           topObstacle.body.setVelocityX(-200);
           topObstacle.scored = false;
           
-          // Create bottom rectangle obstacle with visible graphics
-          const bottomObstacle = this['add'].rectangle(
+          // Create bottom pipe obstacle with visible pipe image
+          const bottomObstacle = this['add'].image(
             800, 
             gapEnd + (availableHeight - gapEnd) / 2, 
-            obstacleWidth, 
-            availableHeight - gapEnd, 
-            0x00000   , 
-            0.7  
+            'pipe'
           );
+          bottomObstacle.setDisplaySize(obstacleWidth, availableHeight - gapEnd);
+          bottomObstacle.setDepth(15); // Set depth to be above floor but below dogs
           this.obstacles.add(bottomObstacle);
           this['physics'].add.existing(bottomObstacle, true);
           bottomObstacle.body.setVelocityX(-200);
@@ -395,11 +572,13 @@ background.setScale(
           const topDog = this['add'].sprite(800, gapStart - 40, 'dog-waiting');
           topDog.setScale(0.12); // Adjust scale based on your GIF size
           topDog.setOrigin(0.5, 1);
+          topDog.setDepth(20); // Set depth to be above pipes
           this.dogImages.add(topDog);
           
           const bottomDog = this['add'].sprite(800, gapEnd + 40, 'dog-waiting');
           bottomDog.setScale(0.12); // Adjust scale based on your GIF size
           bottomDog.setOrigin(0.5, 0);
+          bottomDog.setDepth(20); // Set depth to be above pipes
           this.dogImages.add(bottomDog);
           
           // Play dog waiting sound
@@ -442,7 +621,24 @@ background.setScale(
           // Play game over sound
           this.gameOverSound.play();
           
-          // Change any visible dogs to happy
+          // Find the center position of a visible dog for GIF start position
+          let dogX = this.gameWidth / 2;
+          let dogY = this.gameHeight / 2;
+          
+          const visibleDogs = this.dogImages.getChildren();
+          if (visibleDogs.length > 0) {
+            // Get the first visible dog
+            for (const dog of visibleDogs) {
+              if (dog.x > 0 && dog.x < this.gameWidth) {
+                dogX = dog.x;
+                dogY = dog.y;
+                dog.setTexture('dog-happy');
+                break;
+              }
+            }
+          }
+          
+          // Change any remaining visible dogs to happy
           this.dogImages.getChildren().forEach((dog: any) => {
             dog.setTexture('dog-happy');
           });
@@ -450,15 +646,51 @@ background.setScale(
           // Play dog happy sound
           this.dogHappySound.play();
           
-          // Add game over text
-          this['add'].text(this.gameWidth / 2, this.gameHeight / 3, 'Game Over', {  // Position at top third
-            fontSize: '40px',  // Reduced from 64px
-            color: '#fff',
-            stroke: '#000',
-            strokeThickness: 4  // Reduced from 6
-          }).setOrigin(0.5);
+          // Position and show the game over GIF starting from the dog position
+          this.gameOverGif.x = dogX;
+          this.gameOverGif.y = dogY;
+          this.gameOverGif.setVisible(true);
           
-          this.restartButton.setVisible(true);
+          // Create shaking and growing effect for the GIF
+          this.gameOverShakeTween = this['tweens'].add({
+            targets: this.gameOverGif,
+            scale: { from: 0.1, to: 2.0 },
+            x: { from: dogX, to: this.gameWidth / 2 },
+            y: { from: dogY, to: this.gameHeight / 2 },
+            duration: 1500,
+            ease: 'Power2',
+            onUpdate: () => {
+              // Add random shake effect during scaling
+              if (this.gameOverGif.visible) {
+                this.gameOverGif.x += (Math.random() - 0.5) * 10 * this.gameOverGif.scale;
+                this.gameOverGif.y += (Math.random() - 0.5) * 10 * this.gameOverGif.scale;
+              }
+            },
+            onComplete: () => {
+              // Show game over text after GIF is full screen
+              this['add'].text(this.gameWidth / 2, this.gameHeight / 4, 'Game Over', {
+                fontSize: '40px',
+                color: '#fff',
+                stroke: '#000',
+                strokeThickness: 4
+              }).setOrigin(0.5).setDepth(95);
+              
+              // Show restart button on top of GIF
+              this.restartButton.setVisible(true);
+              this.restartButton.y = this.gameHeight * 0.75; // Position lower on screen
+              
+              // Continue subtle shake effect
+              this['tweens'].add({
+                targets: this.gameOverGif,
+                x: { from: this.gameWidth / 2 - 5, to: this.gameWidth / 2 + 5 },
+                y: { from: this.gameHeight / 2 - 5, to: this.gameHeight / 2 + 5 },
+                duration: 100,
+                yoyo: true,
+                repeat: -1,
+                ease: 'Sine.easeInOut'
+              });
+            }
+          });
         }
         
         increaseScore() {
@@ -472,8 +704,8 @@ background.setScale(
       // Configure the game with the scene
       const config = {
         type: this.Phaser.AUTO,
-        width: 360,  // Standard mobile width
-        height: 640, // Gives us approximately 16:9 ratio
+        width: 360,
+        height: 640,
         parent: 'game-container',
         physics: {
           default: 'arcade',
@@ -483,7 +715,7 @@ background.setScale(
           }
         },
         scale: {
-          mode: this.Phaser.Scale.FIT ,  // Change from FIT to RESIZE
+          mode: this.Phaser.Scale.FIT,
           autoCenter: this.Phaser.Scale.CENTER_BOTH,
           width: 360,
           height: 640,
