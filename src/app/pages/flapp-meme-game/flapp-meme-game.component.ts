@@ -84,6 +84,8 @@ export class FlappMemeGameComponent implements OnInit, OnDestroy {
         obstacles: any;
         dogImages: any;
         restartButton: any;
+        backButton: any;
+        muteButton: any;
         gameOver: boolean;
         score: number;
         scoreText: any;
@@ -92,6 +94,7 @@ export class FlappMemeGameComponent implements OnInit, OnDestroy {
         loadingText: any;
         gameWidth: number = 360;
         gameHeight: number = 640;
+        isMuted: boolean = false;
         
         // Background elements for motion illusion
         clouds: any[] = [];
@@ -174,6 +177,11 @@ export class FlappMemeGameComponent implements OnInit, OnDestroy {
           this['load'].image('dog-happy', './assets/images/dog-happy.gif');
           this['load'].image('restart-btn', './assets/images/restart-button.png');
           
+          // Load back and mute button assets
+          this['load'].image('back-btn', './assets/images/back.png'); // Add this asset
+          this['load'].image('mute-btn', './assets/images/mute.png'); // Add this asset
+          this['load'].image('unmute-btn', './assets/images/unmute.png'); // Add this asset
+          
           // Game assets
           this['load'].image('background', './assets/images/background.jpg');
           this['load'].image('cloud', './assets/images/cloud.png');
@@ -255,12 +263,31 @@ export class FlappMemeGameComponent implements OnInit, OnDestroy {
           // this.addCatWingsAndHalo();
           
           // Add score text - highest depth
-          this.scoreText = this['add'].text(16, 16, 'Score: 0', { 
+          this.scoreText = this['add'].text(this.gameWidth/2 - 40, 16, 'Score: 0', { 
             fontSize: '24px',
             color: '#fff',
             stroke: '#000',
             strokeThickness: 3
           }).setDepth(50);
+          
+          // Add back button at top right
+          this.backButton = this['add'].image(25, 30, 'back-btn')
+            .setInteractive()
+            .on('pointerdown', () => {
+              // Redirect to ../# when back button is clicked
+              window.location.href = '../#';
+            })
+            .setScale(0.1)  // Adjust scale as needed
+            .setDepth(100); // Ensure button is above everything
+          
+          // Add mute/unmute button
+          this.muteButton = this['add'].image(this.gameWidth, 30, 'mute-btn')
+            .setInteractive()
+            .on('pointerdown', () => {
+              this.toggleMute();
+            })
+            .setScale(0.1)  // Adjust scale as needed
+            .setDepth(100); // Ensure button is above everything
           
           // Add initial obstacle immediately
           this.addObstacleWithDog();
@@ -295,6 +322,7 @@ export class FlappMemeGameComponent implements OnInit, OnDestroy {
           .setInteractive()
           .on('pointerdown', () => {
             this['scene'].restart();
+            this.gameOverSound.stop();
             this.gameOver = false;
             this.score = 0;
           })
@@ -307,6 +335,19 @@ export class FlappMemeGameComponent implements OnInit, OnDestroy {
           // Handle resize events
           this.handleResize();
           window.addEventListener('resize', () => this.handleResize());
+        }
+        
+        toggleMute() {
+          this.isMuted = !this.isMuted;
+          
+          // Update the button texture
+          if (this.isMuted) {
+            this.muteButton.setTexture('unmute-btn');
+            this['sound'].mute = true;
+          } else {
+            this.muteButton.setTexture('mute-btn');
+            this['sound'].mute = false;
+          }
         }
         
         createClouds() {
@@ -512,7 +553,7 @@ export class FlappMemeGameComponent implements OnInit, OnDestroy {
           if (this.gameOver || !this.cat) return;
           
           // Apply upward velocity to make the cat "flap"
-          this.cat.body.velocity.y = -280;
+          this.cat.body.velocity.y = -240;
           
           // Play flap sound
           this.catFlapSound.play();
@@ -587,16 +628,16 @@ export class FlappMemeGameComponent implements OnInit, OnDestroy {
           // Add tweens to move the dogs
           this['tweens'].add({
             targets: [topDog, bottomDog],
-            x: -100,
-            duration: 5000,
+            x: -30,
+            duration: 6000,
             ease: 'Linear'
           });
           
           // Add tweens to move the obstacles
           this['tweens'].add({
             targets: [topObstacle, bottomObstacle],
-            x: -100,
-            duration: 5000,
+            x: -30,
+            duration: 6000,
             ease: 'Linear'
           });
         }
