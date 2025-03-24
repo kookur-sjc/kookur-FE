@@ -95,6 +95,7 @@ export class FlappMemeGameComponent implements OnInit, OnDestroy {
         gameWidth: number = 360;
         gameHeight: number = 640;
         isMuted: boolean = false;
+        playerSide: string ='';
         
         // Background elements for motion illusion
         clouds: any[] = [];
@@ -118,10 +119,20 @@ export class FlappMemeGameComponent implements OnInit, OnDestroy {
           this.gameOver = false;
           this.score = 0;
           this.passedObstacles = new Set();
+          this.playerSide = 'cat'; // Default to cat side
         }
+
+        init(data: any) {
+          // Get the selected player side from scene data
+          if (data && data.playerSide) {
+            this.playerSide = data.playerSide;
+          }
+        }
+      
         
         preload() {
           console.log('Preloading assets');
+          console.log('Preloading assets for player side:', this.playerSide);
           
           // Create loading text
           this.loadingText = this['add'].text(
@@ -189,7 +200,8 @@ export class FlappMemeGameComponent implements OnInit, OnDestroy {
           this['load'].image('pipe', './assets/images/pipe.png'); // Load pipe image
           
           // Load game over GIF instead of video
-          this['load'].image('game-over-gif', './assets/images/dog-happy.gif');
+          this['load'].image('game-over-dog-gif', './assets/images/dog-happy.gif');
+          this['load'].image('game-over-cat-gif', './assets/images/cat-mocking.png');
           
           // Load audio files
           this['load'].audio('cat-flap', './assets/audio/test.mp3');
@@ -198,7 +210,8 @@ export class FlappMemeGameComponent implements OnInit, OnDestroy {
           this['load'].audio('dog-waiting', './assets/audio/test.mp3');
           this['load'].audio('dog-crying', './assets/audio/test.mp3');
           this['load'].audio('dog-happy', './assets/audio/test.mp3');
-          this['load'].audio('game-over', './assets/audio/game-over-audio.mp3');
+          this['load'].audio('game-over-dog', './assets/audio/dog-laughing-audio.mp3');
+          this['load'].audio('game-over-cat', './assets/audio/cat-laughing-audio.mp3');
           
           console.log('Assets preload complete');
         }
@@ -217,7 +230,9 @@ export class FlappMemeGameComponent implements OnInit, OnDestroy {
           this.dogWaitingSound = this['sound'].add('dog-waiting');
           this.dogCryingSound = this['sound'].add('dog-crying');
           this.dogHappySound = this['sound'].add('dog-happy');
-          this.gameOverSound = this['sound'].add('game-over');
+          this.gameOverSound = this.playerSide === 'cat' ? this['sound'].add('game-over-dog') : this['sound'].add('game-over-cat');
+         
+         
           
           // Set up layers with proper depth
           // Background (lowest depth)
@@ -243,24 +258,64 @@ export class FlappMemeGameComponent implements OnInit, OnDestroy {
           // Add moving floor - above clouds but below obstacles and dogs
           this.createMovingFloor();
           
-          // Create cat sprite - highest depth for gameplay elements
-          this.cat = this['physics'].add.sprite(this.gameWidth / 2, this.gameHeight / 2, 'cat-normal');
-          this.cat.setCollideWorldBounds(true);
-          this.cat.setDepth(30);
+          // // Create cat sprite - highest depth for gameplay elements
+          // this.cat = this['physics'].add.sprite(this.gameWidth / 2, this.gameHeight / 2, 'cat-normal');
+          // this.cat.setCollideWorldBounds(true);
+          // this.cat.setDepth(30);
           
           // Set cat to die when touching world bounds
-          this.cat.body.onWorldBounds = true;
-          this['physics'].world.on('worldbounds', this.hitWorldBounds, this);
+          // this.cat.body.onWorldBounds = true;
+          // this['physics'].world.on('worldbounds', this.hitWorldBounds, this);
           
           // Scale the cat to appropriate size
-          this.cat.setScale(0.15);
+          // this.cat.setScale(0.15);
           
           // Adjust the hitbox of the cat to be smaller than the image
-          this.cat.body.setSize(this.cat.width * 0.6, this.cat.height * 0.6);
-          this.cat.body.setOffset(this.cat.width * 0.2, this.cat.height * 0.2);
+          // this.cat.body.setSize(this.cat.width * 0.6, this.cat.height * 0.6);
+          // this.cat.body.setOffset(this.cat.width * 0.2, this.cat.height * 0.2);
           
           // Add wings and halo to the cat
           // this.addCatWingsAndHalo();
+
+           // Create obstacles group
+    this.obstacles = this['physics'].add.group({
+      allowGravity: false,
+      immovable: true
+    });
+    
+    // Create opponent images group (dogs or cats depending on player side)
+    this.dogImages = this['add'].group();
+    
+    // Add moving floor
+    this.createMovingFloor();
+    
+    // Create player sprite based on selected side
+    if (this.playerSide === 'cat') {
+      // Original cat implementation
+      this.cat = this['physics'].add.sprite(this.gameWidth / 2, this.gameHeight / 2, 'cat-normal');
+    } else {
+      // Dog implementation (when dog is the player)
+      this.cat = this['physics'].add.sprite(this.gameWidth / 2, this.gameHeight / 2, 'dog-waiting');
+    }
+    
+    this.cat.setCollideWorldBounds(true);
+    this.cat.setDepth(30);
+    this.cat.body.onWorldBounds = true;
+    this['physics'].world.on('worldbounds', this.hitWorldBounds, this);
+    this.cat.setScale(0.15);
+    this.cat.body.setSize(this.cat.width * 0.6, this.cat.height * 0.6);
+    this.cat.body.setOffset(this.cat.width * 0.2, this.cat.height * 0.2);
+
+    this.addObstacleWithOpponent();
+    
+    // Create obstacle timer
+    this['time'].addEvent({
+      delay: 2500,
+      callback: this.addObstacleWithOpponent,
+      callbackScope: this,
+      loop: true,
+      startAt: 500
+    });
           
           // Add score text - highest depth
           this.scoreText = this['add'].text(this.gameWidth/2 - 40, 16, 'Score: 0', { 
@@ -290,16 +345,16 @@ export class FlappMemeGameComponent implements OnInit, OnDestroy {
             .setDepth(100); // Ensure button is above everything
           
           // Add initial obstacle immediately
-          this.addObstacleWithDog();
+          
           
           // Create obstacle timer for subsequent obstacles
-          this['time'].addEvent({
-            delay: 2500,
-            callback: this.addObstacleWithDog,
-            callbackScope: this,
-            loop: true,
-            startAt: 500 // Start sooner to add obstacles faster
-          });
+          // this['time'].addEvent({
+          //   delay: 2500,
+          //   callback: this.addObstacleWithDog,
+          //   callbackScope: this,
+          //   loop: true,
+          //   startAt: 500 // Start sooner to add obstacles faster
+          // });
           
           // Setup input - both mouse/touch and keyboard
           this['input'].on('pointerdown', this.flapCat, this);
@@ -313,7 +368,13 @@ export class FlappMemeGameComponent implements OnInit, OnDestroy {
           this['physics'].add.collider(this.cat, this.obstacles, this.hitObstacle, null, this);
           
           // Create game over GIF (hidden initially)
-          this.gameOverGif = this['add'].image(this.gameWidth / 2, this.gameHeight / 2, 'game-over-gif');
+          if (this.playerSide === 'cat') {
+            this.gameOverGif = this['add'].image(this.gameWidth / 2, this.gameHeight / 2, 'game-over-dog-gif');
+          }
+          else {  
+            this.gameOverGif = this['add'].image(this.gameWidth / 2, this.gameHeight / 2, 'game-over-cat-gif');
+          }
+          
           this.gameOverGif.setVisible(false);
           this.gameOverGif.setScale(0.1); // Start small for growth animation
           this.gameOverGif.setDepth(90); // Very high depth to appear above everything
@@ -455,7 +516,7 @@ export class FlappMemeGameComponent implements OnInit, OnDestroy {
             return;
           }
           
-          // Update cat rotation based on velocity
+          // Update player rotation based on velocity
           if (this.cat.body.velocity.y > 0) {
             this.cat.angle += 1;
           } else {
@@ -470,6 +531,50 @@ export class FlappMemeGameComponent implements OnInit, OnDestroy {
           
           // Update floor position
           this.updateFloor();
+
+          this.obstacles.getChildren().forEach((obstacle: any) => {
+            if (!obstacle.scored && obstacle.x < this.cat.x) {
+              this.increaseScore();
+              obstacle.scored = true;
+              this.passedObstacles.add(obstacle);
+              
+              // Find associated opponent and change its emotion
+              const opponentIndex = Array.from(this.passedObstacles).indexOf(obstacle);
+              const opponents = this.dogImages.getChildren();
+              
+              if (opponentIndex !== -1 && opponents[opponentIndex]) {
+                if (this.playerSide === 'cat') {
+                  // If player is cat, opponent is dog
+                  opponents[opponentIndex].setTexture('dog-crying');
+                  this.dogCryingSound.play();
+                } else {
+                  // If player is dog, opponent is cat
+                  opponents[opponentIndex].setTexture('cat-sad');
+                  this.catSadSound.play();
+                }
+              }
+              
+              // Make player happy temporarily
+              if (this.playerSide === 'cat') {
+                this.cat.setTexture('cat-happy');
+                this.catHappySound.play();
+              } else {
+                this.cat.setTexture('dog-happy');
+                this.dogHappySound.play();
+              }
+              
+              if (this.catEmotionTimer) this.catEmotionTimer.remove();
+              this.catEmotionTimer = this['time'].delayedCall(500, () => {
+                if (!this.gameOver && this.cat) {
+                  if (this.playerSide === 'cat') {
+                    this.cat.setTexture('cat-normal');
+                  } else {
+                    this.cat.setTexture('dog-waiting');
+                  }
+                }
+              }, [], this);
+            }
+          });
           
           // Check for obstacle passing
           this.obstacles.getChildren().forEach((obstacle: any) => {
@@ -550,13 +655,18 @@ export class FlappMemeGameComponent implements OnInit, OnDestroy {
         }
         
         flapCat() {
+
           if (this.gameOver || !this.cat) return;
-          
-          // Apply upward velocity to make the cat "flap"
+    
+          // Apply upward velocity to make the player "flap"
           this.cat.body.velocity.y = -240;
           
-          // Play flap sound
-          this.catFlapSound.play();
+          // Play appropriate flap sound
+          if (this.playerSide === 'cat') {
+            this.catFlapSound.play();
+          } else {
+            this.dogWaitingSound.play();
+          }
           
           // Additional wing flap animation
           // this.catWings.forEach(wing => {
@@ -571,7 +681,7 @@ export class FlappMemeGameComponent implements OnInit, OnDestroy {
           // });
         }
         
-        addObstacleWithDog() {
+        addObstacleWithOpponent() {
           if (this.gameOver) return;
           
           const availableHeight = this.gameHeight;
@@ -609,21 +719,40 @@ export class FlappMemeGameComponent implements OnInit, OnDestroy {
           bottomObstacle.body.setVelocityX(-200);
           bottomObstacle.scored = false;
           
+          var topDog = this['add'].sprite(800, gapStart - 40, 'dog-waiting');
+          var bottomDog = this['add'].sprite(800, gapEnd + 40, 'dog-waiting');
           // Add dog at the end of top obstacle (waiting dog)
-          const topDog = this['add'].sprite(800, gapStart - 40, 'dog-waiting');
-          topDog.setScale(0.12); // Adjust scale based on your GIF size
-          topDog.setOrigin(0.5, 1);
-          topDog.setDepth(20); // Set depth to be above pipes
-          this.dogImages.add(topDog);
+          if (this.playerSide === 'cat') {
+            // Add dogs (original behavior)
           
-          const bottomDog = this['add'].sprite(800, gapEnd + 40, 'dog-waiting');
-          bottomDog.setScale(0.12); // Adjust scale based on your GIF size
-          bottomDog.setOrigin(0.5, 0);
-          bottomDog.setDepth(20); // Set depth to be above pipes
-          this.dogImages.add(bottomDog);
-          
-          // Play dog waiting sound
-          this.dogWaitingSound.play();
+            topDog.setScale(0.12);
+            topDog.setOrigin(0.5, 1);
+            topDog.setDepth(20);
+            this.dogImages.add(topDog);
+            
+         
+            bottomDog.setScale(0.12);
+            bottomDog.setOrigin(0.5, 0);
+            bottomDog.setDepth(20);
+            this.dogImages.add(bottomDog);
+            
+            this.dogWaitingSound.play();
+          } else {
+            // Add cats (when dog is player)
+         topDog = this['add'].sprite(800, gapStart - 40, 'cat-normal');
+         topDog.setScale(0.12);
+         topDog.setOrigin(0.5, 1);
+         topDog.setDepth(20);
+            this.dogImages.add(topDog);
+            
+            bottomDog = this['add'].sprite(800, gapEnd + 40, 'cat-normal');
+            bottomDog.setScale(0.12);
+            bottomDog.setOrigin(0.5, 0);
+            bottomDog.setDepth(20);
+            this.dogImages.add(bottomDog);
+            
+            this.catFlapSound.play();
+          }
           
           // Add tweens to move the dogs
           this['tweens'].add({
@@ -650,17 +779,22 @@ export class FlappMemeGameComponent implements OnInit, OnDestroy {
         
         handleGameOver() {
           this['physics'].pause();
-          this.gameOver = true;
-          
-          // Stop all tweens
-          this['tweens'].killAll();
-          
-          // Change cat to sad
-          this.cat.setTexture('cat-sad');
-          this.catSadSound.play();
-          
-          // Play game over sound
-          this.gameOverSound.play();
+    this.gameOver = true;
+    
+    // Stop all tweens
+    this['tweens'].killAll();
+    
+    // Change player to sad based on side
+    if (this.playerSide === 'cat') {
+      this.cat.setTexture('cat-sad');
+      this.catSadSound.play();
+    } else {
+      this.cat.setTexture('dog-crying');
+      this.dogCryingSound.play();
+    }
+    
+    // Play game over sound
+    this.gameOverSound.play();
           
           // Find the center position of a visible dog for GIF start position
           let dogX = this.gameWidth / 2;
@@ -680,8 +814,14 @@ export class FlappMemeGameComponent implements OnInit, OnDestroy {
           }
           
           // Change any remaining visible dogs to happy
-          this.dogImages.getChildren().forEach((dog: any) => {
-            dog.setTexture('dog-happy');
+          this.dogImages.getChildren().forEach((opponent: any) => {
+            if (this.playerSide === 'cat') {
+              opponent.setTexture('dog-happy');
+              this.dogHappySound.play();
+            } else {
+              opponent.setTexture('cat-happy');
+              this.catHappySound.play();
+            }
           });
           
           // Play dog happy sound
@@ -741,6 +881,65 @@ export class FlappMemeGameComponent implements OnInit, OnDestroy {
           }
         }
       }
+
+      class CharacterSelectionScene extends self.Phaser.Scene {
+        constructor() {
+          super({ key: 'CharacterSelectionScene' });
+        }
+      
+        preload() {
+          // Load selection assets
+          this['load'].image('cat-select', './assets/images/cat-normal.gif');
+          this['load'].image('dog-select', './assets/images/dog-waiting.png');
+          this['load'].image('select-button', './assets/images/restart-button.png');
+        }
+      
+        create() {
+          const gameWidth = this['game'].config.width;
+          const gameHeight = this['game'].config.height;
+      
+          // Add title
+          this['add'].text(gameWidth / 2, gameHeight * 0.2, 'Choose Your Character', {
+            fontSize: '28px',
+            color: '#fff',
+            stroke: '#000',
+            strokeThickness: 4
+          }).setOrigin(0.5);
+      
+          // Add character options
+          const catButton = this['add'].image(gameWidth * 0.3, gameHeight * 0.5, 'cat-select')
+            .setInteractive()
+            .setScale(0.2);
+          
+          const dogButton = this['add'].image(gameWidth * 0.7, gameHeight * 0.5, 'dog-select')
+            .setInteractive()
+            .setScale(0.2);
+      
+          // Add labels
+          this['add'].text(gameWidth * 0.3, gameHeight * 0.65, 'Cat Side', {
+            fontSize: '24px',
+            color: '#fff',
+            stroke: '#000',
+            strokeThickness: 3
+          }).setOrigin(0.5);
+      
+          this['add'].text(gameWidth * 0.7, gameHeight * 0.65, 'Dog Side', {
+            fontSize: '24px',
+            color: '#fff',
+            stroke: '#000',
+            strokeThickness: 3
+          }).setOrigin(0.5);
+      
+          // Selection button handlers
+          catButton.on('pointerdown', () => {
+            this['scene'].start('FlappyCatScene', { playerSide: 'cat' });
+          });
+      
+          dogButton.on('pointerdown', () => {
+            this['scene'].start('FlappyCatScene', { playerSide: 'dog' });
+          });
+        }
+      }
       
       // Configure the game with the scene
       const config = {
@@ -762,7 +961,7 @@ export class FlappMemeGameComponent implements OnInit, OnDestroy {
           height: 640,
           parent: 'game-container'
         },
-        scene: [FlappyCatScene]
+        scene: [CharacterSelectionScene, FlappyCatScene]
       };
       
       console.log('Creating game with config:', config);
