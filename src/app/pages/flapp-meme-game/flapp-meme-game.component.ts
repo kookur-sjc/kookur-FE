@@ -189,7 +189,7 @@ export class FlappMemeGameComponent implements OnInit, OnDestroy {
           this['load'].image('restart-btn', './assets/images/restart-button.png');
           
           // Load back and mute button assets
-          this['load'].image('back-btn', './assets/images/back.png'); // Add this asset
+          this['load'].image('back-btn', './assets/images/back.png');  // Add this asset
           this['load'].image('mute-btn', './assets/images/mute.png'); // Add this asset
           this['load'].image('unmute-btn', './assets/images/unmute.png'); // Add this asset
           
@@ -330,7 +330,11 @@ export class FlappMemeGameComponent implements OnInit, OnDestroy {
             .setInteractive()
             .on('pointerdown', () => {
               // Redirect to ../# when back button is clicked
-              window.location.href = '../#';
+              this['scene'].restart();
+              this.gameOverSound.stop();
+              this.gameOver = false;
+              this.score = 0;
+              this['scene'].start('CharacterSelectionScene');
             })
             .setScale(0.1)  // Adjust scale as needed
             .setDepth(100); // Ensure button is above everything
@@ -892,6 +896,7 @@ export class FlappMemeGameComponent implements OnInit, OnDestroy {
           this['load'].image('cat-select', './assets/images/cat-normal.gif');
           this['load'].image('dog-select', './assets/images/dog-waiting.png');
           this['load'].image('select-button', './assets/images/restart-button.png');
+          this['load'].image('back-btn-orange', './assets/images/back-btn-orange.png');
         }
       
         create() {
@@ -929,6 +934,7 @@ export class FlappMemeGameComponent implements OnInit, OnDestroy {
             stroke: '#000',
             strokeThickness: 3
           }).setOrigin(0.5);
+
       
           // Selection button handlers
           catButton.on('pointerdown', () => {
@@ -938,6 +944,14 @@ export class FlappMemeGameComponent implements OnInit, OnDestroy {
           dogButton.on('pointerdown', () => {
             this['scene'].start('FlappyCatScene', { playerSide: 'dog' });
           });
+
+         this['add'].image(gameWidth * 0.5, gameHeight * 0.75, 'back-btn-orange')
+            .setInteractive()
+            .on('pointerdown', () => {
+              window.location.href = '/games';
+            })
+            .setScale(0.1)
+            .setDepth(100);
         }
       }
       

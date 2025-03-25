@@ -1,0 +1,19 @@
+<div class="games-container">
+    <h1 class="page-title">Awesome Games Collection</h1>
+    <p class="page-subtitle">Explore and enjoy our exciting game lineup!</p>
+    
+    <div class="games-grid">
+      <div 
+        *ngFor="let game of games" 
+        class="game-card" 
+        (click)="navigateToGame(game.route)"
+      >
+        <img [src]="game.imagePath" [alt]="game.title" class="game-image">
+        <div class="game-details">
+          <h2 class="game-title">{{ game.title }}</h2>
+          <p class="game-description">{{ game.description }}</p>
+          <button class="play-button">Play Now</button>
+        </div>
+      </div>
+    </div>
+  </div>

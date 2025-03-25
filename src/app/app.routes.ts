@@ -14,6 +14,7 @@ import { OrderPageComponent } from './pages/order-page/order-page.component';
 import { HomePageComponent } from './layout/home-page/home-page.component';
 import { AdminOnlyComponent } from './admin-only/admin-only.component';
 import { FlappMemeGameComponent } from './pages/flapp-meme-game/flapp-meme-game.component';
+import { GamesComponent } from './pages/games/games.component';
 
 export const routes: Routes = [
    {path: '', component: HomePageComponent},
@@ -28,7 +29,15 @@ export const routes: Routes = [
    {path: 'cart', component: CartPageComponent},
    {path: 'order', component: OrderPageComponent},
    {path: 'admin', component: AdminOnlyComponent},
-   {path: 'flapp-meme-game', component: FlappMemeGameComponent},
+   {
+      path: 'games', 
+      children: [
+        { path: '', component: GamesComponent },
+        { path: 'flapp-meme-game', component: FlappMemeGameComponent },
+        // You can easily add more games here
+        // { path: 'another-game', component: AnotherGameComponent }
+      ]
+    }
 
 
 ];

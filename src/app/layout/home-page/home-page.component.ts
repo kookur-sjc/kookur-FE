@@ -18,7 +18,7 @@ export class HomePageComponent {
       case 'videos':
         this.router.navigate(['/player']);
         break;
-      case 'ecommerce':
+      case 'shop':
         this.router.navigate(['/all-products']);
         break;
       case 'games':
