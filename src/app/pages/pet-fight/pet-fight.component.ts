@@ -110,6 +110,9 @@ export class PetFightComponent implements OnInit, OnDestroy {
         this['load'].image('dog', './assets/images/dog-waiting.png');
         this['load'].image('barricade', './assets/images/dog-sad.gif');
         this['load'].image('restart-btn', './assets/images/restart-button.png');
+
+        this['load'].image('right-button', './assets/images/right-button.png');
+        
       }
 
       create(data: { character: string }) {
@@ -196,6 +199,32 @@ export class PetFightComponent implements OnInit, OnDestroy {
 
       setupTouchControls() {
         const { width, height } = this['game'].config;
+  
+        // Add visual buttons for mobile (optional)
+        const leftButton = this['add'].image(width * 0.2, height * 0.9, 'right-button')
+          .setInteractive()
+          .setScale(0.1)
+          .setAlpha(1)
+          .setDepth(20)
+          .setAngle(180); 
+          
+        const rightButton = this['add'].image(width * 0.8, height * 0.9, 'right-button')
+          .setInteractive()
+          .setScale(0.1)
+          .setAlpha(1)
+          .setDepth(20);
+        
+        // Load these in preload()
+        // this['load'].image('left-button', './assets/images/left-arrow.png');
+        // this['load'].image('right-button', './assets/images/right-arrow.png');
+        
+        leftButton.on('pointerdown', () => {
+          this.switchLane(-1);
+        });
+        
+        rightButton.on('pointerdown', () => {
+          this.switchLane(1);
+        });
         
         // Create invisible touch zones for left and right
         const leftZone = this['add'].zone(width * 0.25, height * 0.5, width * 0.5, height)
