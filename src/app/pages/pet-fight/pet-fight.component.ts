@@ -87,12 +87,14 @@ export class PetFightComponent implements OnInit, OnDestroy {
       private player: any;
       private obstacles: any;
       private barricades: any;
+      private foodItems: any;  // New food group
       private roadLines: any[] = [];
       private currentLane: number = 2;
       private scoreText: any;
       private score: number = 0;
       private gameOver: boolean = false;
       private scrollSpeed: number = -200;
+      private difficultyMultiplier: number = 1;  // New difficulty multiplier
 
       constructor() {
         super({ key: 'GameScene' });
@@ -110,6 +112,7 @@ export class PetFightComponent implements OnInit, OnDestroy {
         this['load'].image('dog', './assets/images/dog-waiting.png');
         this['load'].image('barricade', './assets/images/dog-sad.gif');
         this['load'].image('restart-btn', './assets/images/restart-button.png');
+        this['load'].image('cat-food', './assets/images/cat-food.png'); 
 
         this['load'].image('right-button', './assets/images/right-button.png');
         
@@ -121,7 +124,9 @@ export class PetFightComponent implements OnInit, OnDestroy {
         // Reset game state
         this.score = 0;
         this.gameOver = false;
-        this.currentLane = 1; // Start in middle lane
+        this.currentLane = 1;
+        this.difficultyMultiplier = 1;  // Reset difficulty
+        this.scrollSpeed = -200;  // Reset scroll speed // Start in middle lane
 
         // Create three roads
         this.roadLines = [];
@@ -147,13 +152,17 @@ export class PetFightComponent implements OnInit, OnDestroy {
       this.player.setCollideWorldBounds(true);
       this.player.setDepth(10);
 
+      this.foodItems = this['physics'].add.group();
+        
+
         // Obstacle Groups
         this.obstacles = this['physics'].add.group();
         this.barricades = this['physics'].add.group({
           allowGravity: false, // Prevent unnecessary gravity effects
           immovable: true // Make sure the barricade doesn't move on collision
         });
-        
+
+      
 
         
 
@@ -172,12 +181,20 @@ export class PetFightComponent implements OnInit, OnDestroy {
         this.setupTouchControls();
 
         // Obstacle Spawner
-        this['time'].addEvent({
-          delay: 1000, // Adjusted delay for better spawning
-          callback: this.spawnObstacles,
-          callbackScope: this,
-          loop: true
-        });
+        // this['time'].addEvent({
+        //   delay: 1000, // Adjusted delay for better spawning
+        //   callback: this.spawnObstacles,
+        //   callbackScope: this,
+        //   loop: true
+        // });
+
+        this['physics'].add.overlap(
+          this.player, 
+          this.foodItems, 
+          this.collectFood, 
+          null, 
+          this
+        );
 
         // Collision Detection
         this['physics'].add.overlap(
@@ -195,6 +212,80 @@ export class PetFightComponent implements OnInit, OnDestroy {
           null, 
           this
         );
+
+        this['time'].addEvent({
+          delay: 1000, 
+          callback: this.spawnItemsAndIncreaseHardness,
+          callbackScope: this,
+          loop: true
+        });
+      }
+
+      spawnItemsAndIncreaseHardness() {
+        if (this.gameOver) return;
+        
+        const { width, height } = this['game'].config;
+        const roadWidth = width / 3;
+
+        const lanes = [0, 1, 2];
+        lanes.sort(() => 0.5 - Math.random());
+
+        // Increase difficulty based on score
+        if (this.score > 0 && this.score % 100 === 0) {
+          this.difficultyMultiplier += 0.2;
+          this.scrollSpeed -= 2;  // Make roads move faster
+        }
+
+        // Spawn food in one lane
+        const foodLane = lanes.splice(Math.floor(Math.random() * lanes.length), 1)[0];
+        const food = this.foodItems.create(
+          roadWidth * (foodLane + 0.5), 
+          -50, 
+          'cat-food'
+        );
+        food.setScale(0.3);
+        food.setVelocityY(-this.scrollSpeed * this.difficultyMultiplier);
+        food.setDepth(5);
+
+        // Barricade in another lane
+        const barricadeLane = lanes.splice(Math.floor(Math.random() * lanes.length), 1)[0];
+        const barricade = this.barricades.create(
+          roadWidth * (barricadeLane + 0.5), 
+          -50, 
+          'barricade'
+        );
+        barricade.setScale(0.15);
+        barricade.setVelocityY(-this.scrollSpeed * this.difficultyMultiplier);
+        barricade.setDepth(5);
+
+        // Obstacles in remaining lanes
+        lanes.forEach((lane) => {
+          const obstacle = this.obstacles.create(
+            roadWidth * (lane + 0.5), 
+            -50,
+            'dog'
+          );
+          obstacle.setScale(0.15);
+          obstacle.setVelocityY(this.scrollSpeed * this.difficultyMultiplier);
+          obstacle.setDepth(5);
+        });
+      }
+
+      collectFood(player: any, food: any) {
+        // Destroy food and increase score
+        food.destroy();
+        this.score += 50;  // More points for collecting food
+        this.scoreText.setText('Score: ' + this.score);
+      }
+
+  
+
+      removeOffScreenItems(group: any) {
+        group.getChildren().forEach((item: any) => {
+          if (item.y > this['game'].config.height + item.height) {
+            item.destroy();
+          }
+        });
       }
 
       setupTouchControls() {
@@ -282,43 +373,43 @@ export class PetFightComponent implements OnInit, OnDestroy {
     }
 }
 
-spawnObstacles() {
-  if (this.gameOver) return;
+// spawnObstacles() {
+//   if (this.gameOver) return;
   
-  const { width, height } = this['game'].config;
-  const roadWidth = width / 3;
+//   const { width, height } = this['game'].config;
+//   const roadWidth = width / 3;
 
-  const lanes = [0, 1, 2];
-  lanes.sort(() => 0.5 - Math.random());
+//   const lanes = [0, 1, 2];
+//   lanes.sort(() => 0.5 - Math.random());
 
-  // Remove debug logs for production
-  // console.log('Available lanes:', lanes);
+//   // Remove debug logs for production
+//   // console.log('Available lanes:', lanes);
   
-  const barricadeLane = lanes.splice(Math.floor(Math.random() * lanes.length), 1)[0];
-  // console.log('Barricade lane:', barricadeLane);
+//   const barricadeLane = lanes.splice(Math.floor(Math.random() * lanes.length), 1)[0];
+//   // console.log('Barricade lane:', barricadeLane);
 
-  const barricade = this.barricades.create(
-    roadWidth * (barricadeLane + 0.5), // Centered in lane
-    -50, // Start above screen
-    'barricade'
-  );
-  barricade.setScale(0.15);
-  barricade.setVelocityY(-this.scrollSpeed);
-  barricade.setDepth(5);
+//   const barricade = this.barricades.create(
+//     roadWidth * (barricadeLane + 0.5), // Centered in lane
+//     -50, // Start above screen
+//     'barricade'
+//   );
+//   barricade.setScale(0.15);
+//   barricade.setVelocityY(-this.scrollSpeed);
+//   barricade.setDepth(5);
 
-  // console.log('Remaining lanes:', lanes);
+//   // console.log('Remaining lanes:', lanes);
 
-  lanes.forEach((lane) => {
-    const obstacle = this.obstacles.create(
-      roadWidth * (lane + 0.5), // Fix the position to be centered in lane
-      -50,
-      'dog'
-    );
-    obstacle.setScale(0.15);
-    obstacle.setVelocityY(this.scrollSpeed);
-    obstacle.setDepth(5);
-  });
-}
+//   lanes.forEach((lane) => {
+//     const obstacle = this.obstacles.create(
+//       roadWidth * (lane + 0.5), // Fix the position to be centered in lane
+//       -50,
+//       'dog'
+//     );
+//     obstacle.setScale(0.15);
+//     obstacle.setVelocityY(this.scrollSpeed);
+//     obstacle.setDepth(5);
+//   });
+// }
 
       hitObstacle(player: any, obstacle: any) {
         this.endGame('dog');
@@ -375,25 +466,17 @@ spawnObstacles() {
 
         // Scroll roads
         this.roadLines.forEach(roadLine => {
-          roadLine.tilePositionY -= 5;
+          roadLine.tilePositionY -= 5 * this.difficultyMultiplier;
         });
 
-        // Increase score
-        this.score++;
+        // Increase base score
+        // this.score++;
         this.scoreText.setText('Score: ' + this.score);
 
-        // Remove off-screen obstacles
-        this.obstacles.getChildren().forEach((obstacle: any) => {
-          if (obstacle.y > this['game'].config.height + obstacle.height) {
-            obstacle.destroy();
-          }
-        });
-
-        this.barricades.getChildren().forEach((barricade: any) => {
-          if (barricade.y > this['game'].config.height + barricade.height) {
-            barricade.destroy();
-          }
-        });
+        // Remove off-screen items
+        this.removeOffScreenItems(this.obstacles);
+        this.removeOffScreenItems(this.barricades);
+        this.removeOffScreenItems(this.foodItems);
       }
     }
 
