@@ -133,9 +133,9 @@ export class PetFetchComponent  implements OnInit, OnDestroy {
         // Player
         this.player = this['physics'].add.sprite(
           width * 0.2, 
-          height - 60, 
+          height - 80, 
           data.character
-        ).setScale(0.2);
+        ).setScale(0.3);
         this.player.setCollideWorldBounds(true);
         this.player.setGravityY(this.gravity);
         this.player.setDepth(10);
@@ -216,7 +216,7 @@ export class PetFetchComponent  implements OnInit, OnDestroy {
         const { width, height } = this['game'].config;
         
         // Randomly choose between dog and barricade
-        const obstacleType = Math.random() > 0.5 ? 'dog' : 'barricade';
+        const obstacleType = Math.random() > 0.5 ? 'dog' : 'dog';
         
         // Create the obstacle
         const obstacle = this.obstacles.create(
@@ -225,7 +225,7 @@ export class PetFetchComponent  implements OnInit, OnDestroy {
           obstacleType
         );
         
-        obstacle.setScale(0.15);
+        obstacle.setScale(0.1);
         obstacle.setOrigin(0.5, 1);
         obstacle.setImmovable(true);
         obstacle.setVelocityX(-200 - (this.gameSpeed * 10)); // Adjust speed based on game speed
