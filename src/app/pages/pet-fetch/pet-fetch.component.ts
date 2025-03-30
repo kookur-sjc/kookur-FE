@@ -96,7 +96,7 @@ export class PetFetchComponent  implements OnInit, OnDestroy {
       private isJumping: boolean = false;
       private obstacleTimer: any;
       private gameSpeed: number = 5;
-      private gravity: number = 700;
+      private gravity: number = 900;
       private jumpVelocity: number = -600;
       private difficultyTimer: any;
 
