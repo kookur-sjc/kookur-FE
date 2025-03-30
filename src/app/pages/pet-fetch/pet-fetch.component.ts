@@ -97,7 +97,7 @@ export class PetFetchComponent  implements OnInit, OnDestroy {
       private obstacleTimer: any;
       private gameSpeed: number = 5;
       private gravity: number = 700;
-      private jumpVelocity: number = -400;
+      private jumpVelocity: number = -450;
       private difficultyTimer: any;
 
       constructor() {
@@ -231,7 +231,7 @@ export class PetFetchComponent  implements OnInit, OnDestroy {
         obstacle.setVelocityX(-200 - (this.gameSpeed * 10)); // Adjust speed based on game speed
         
         // Set smaller hitbox
-        obstacle.setSize(obstacle.width * 0.7, obstacle.height * 0.7);
+        obstacle.setSize(obstacle.width * 0.3, obstacle.height * 0.3);
         obstacle.setOffset(obstacle.width * 0.15, obstacle.height * 0.3);
         
         // Auto destroy when off screen
