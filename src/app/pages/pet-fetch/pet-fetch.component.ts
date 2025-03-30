@@ -37,6 +37,14 @@ export class PetFetchComponent  implements OnInit, OnDestroy {
         this['load'].image('cat-head', './assets/images/cat-normal.gif');
         this['load'].image('start-button', './assets/images/restart-button.png');
         this['load'].image('dog', './assets/images/dog-waiting.png');
+        // Load cloud images
+        this['load'].image('cloud1', './assets/images/cloud.png');
+        this['load'].image('cloud2', './assets/images/cloud.png');
+        // Load power-up images
+        this['load'].image('laser-powerup', './assets/images/laser-powerup.png');
+        this['load'].image('eat-powerup', './assets/images/eat-powerup.png');
+        this['load'].image('cat-laser', './assets/images/cat-laser.png');
+        this['load'].image('cat-eating', './assets/images/cat-eating.png');
       }
 
       create() {
@@ -89,16 +97,29 @@ export class PetFetchComponent  implements OnInit, OnDestroy {
     class GameScene extends this.Phaser.Scene {
       private player: any;
       private obstacles: any;
+      private clouds: any;
+      private powerups: any;
       private ground: any;
       private scoreText: any;
+      private powerupText: any;
       private score: number = 0;
       private gameOver: boolean = false;
       private isJumping: boolean = false;
       private obstacleTimer: any;
+      private cloudTimer: any;
+      private powerupTimer: any;
       private gameSpeed: number = 5;
-      private gravity: number = 900;
+      private gravity: number = 1200;
       private jumpVelocity: number = -600;
       private difficultyTimer: any;
+      private hasLaserPower: boolean = false;
+      private hasEatPower: boolean = false;
+      private powerupDuration: number = 5000; // 5 seconds
+      private powerupTimers: any = {
+        laser: null,
+        eat: null
+      };
+      private laserGroup: any;
 
       constructor() {
         super({ key: 'GameScene' });
@@ -108,11 +129,22 @@ export class PetFetchComponent  implements OnInit, OnDestroy {
         // Player assets
         this['load'].image('cat-racer', './assets/images/cat-dino.png');
         this['load'].image('cat-crash', './assets/images/cat-sad.gif');
+        this['load'].image('cat-laser', './assets/images/cat-dino.png');
+        this['load'].image('cat-eating', './assets/images/cat-eating.gif');
         
         // Obstacle assets
         this['load'].image('dog', './assets/images/dog-waiting.png');
         this['load'].image('barricade', './assets/images/dog-sad.gif');
         this['load'].image('restart-btn', './assets/images/restart-button.png');
+        
+        // Cloud assets
+        this['load'].image('cloud1', './assets/images/cloud1.png');
+        this['load'].image('cloud2', './assets/images/cloud2.png');
+        
+        // Power-up assets
+        this['load'].image('laser-powerup', './assets/images/laser-powerup.png');
+        this['load'].image('eat-powerup', './assets/images/eat-powerup.png');
+        this['load'].image('laser-beam', './assets/images/laser-beam.png');
       }
 
       create(data: { character: string }) {
@@ -122,6 +154,8 @@ export class PetFetchComponent  implements OnInit, OnDestroy {
         this.score = 0;
         this.gameOver = false;
         this.gameSpeed = 5;
+        this.hasLaserPower = false;
+        this.hasEatPower = false;
         
         // White background like Chrome's dinosaur game
         this['add'].rectangle(width / 2, height / 2, width, height, 0xFFFFFF);
@@ -139,6 +173,7 @@ export class PetFetchComponent  implements OnInit, OnDestroy {
         this.player.setCollideWorldBounds(true);
         this.player.setGravityY(this.gravity);
         this.player.setDepth(10);
+        this.player.powerState = 'normal'; // Track player power state
         
         // Set hitbox size to be smaller than the image
         this.player.setSize(this.player.width * 0.6, this.player.height * 0.6);
@@ -146,11 +181,26 @@ export class PetFetchComponent  implements OnInit, OnDestroy {
 
         // Obstacle Group
         this.obstacles = this['physics'].add.group();
+        
+        // Cloud Group
+        this.clouds = this['physics'].add.group();
+        
+        // Powerup Group
+        this.powerups = this['physics'].add.group();
+        
+        // Laser Group
+        this.laserGroup = this['physics'].add.group();
 
         // Score Text
         this.scoreText = this['add'].text(16, 16, 'Score: 0', { 
           fontSize: '18px', 
           color: '#000000'
+        }).setDepth(20);
+        
+        // Powerup Text
+        this.powerupText = this['add'].text(16, 40, '', { 
+          fontSize: '16px', 
+          color: '#FF0000'
         }).setDepth(20);
 
         // Collisions
@@ -158,22 +208,48 @@ export class PetFetchComponent  implements OnInit, OnDestroy {
         this['physics'].add.overlap(
           this.player, 
           this.obstacles, 
-          this.hitObstacle, 
+          this.handleObstacleCollision, 
           null, 
+          this
+        );
+        this['physics'].add.overlap(
+          this.player,
+          this.powerups,
+          this.collectPowerup,
+          null,
+          this
+        );
+        this['physics'].add.overlap(
+          this.laserGroup,
+          this.obstacles,
+          this.laserHitObstacle,
+          null,
           this
         );
 
         // Input Handling
         this['input'].keyboard.on('keydown-SPACE', this.jump, this);
         this['input'].keyboard.on('keydown-UP', this.jump, this);
+        this['input'].keyboard.on('keydown-X', this.fireLaser, this);
         
         // Touch control
         this.setupTouchControls();
 
-        // Start spawning obstacles
-        this.obstacleTimer = this['time'].addEvent({
-          delay: 1500,
-          callback: this.spawnObstacle,
+        // Start spawning obstacles with random timing
+        this.scheduleNextObstacle();
+        
+        // Start spawning clouds
+        this.cloudTimer = this['time'].addEvent({
+          delay: 2000,
+          callback: this.spawnCloud,
+          callbackScope: this,
+          loop: true
+        });
+        
+        // Start spawning powerups
+        this.powerupTimer = this['time'].addEvent({
+          delay: 10000, // Every 10 seconds
+          callback: this.spawnPowerup,
           callbackScope: this,
           loop: true
         });
@@ -196,7 +272,13 @@ export class PetFetchComponent  implements OnInit, OnDestroy {
           .setOrigin(0.5);
           
         touchZone.on('pointerdown', () => {
+          // Double tap detection could be added here
           this.jump();
+          
+          // If has laser power, also fire laser
+          if (this.hasLaserPower) {
+            this.fireLaser();
+          }
         });
       }
 
@@ -208,6 +290,23 @@ export class PetFetchComponent  implements OnInit, OnDestroy {
           this.player.setVelocityY(this.jumpVelocity);
           this.isJumping = true;
         }
+      }
+      
+      scheduleNextObstacle() {
+        if (this.gameOver) return;
+        
+        // Random delay between 1000ms and 3000ms
+        const delay = Phaser.Math.Between(1000, 3000);
+        
+        this.obstacleTimer = this['time'].addEvent({
+          delay: delay,
+          callback: () => {
+            this.spawnObstacle();
+            this.scheduleNextObstacle(); // Schedule next obstacle with new random delay
+          },
+          callbackScope: this,
+          loop: false
+        });
       }
 
       spawnObstacle() {
@@ -225,7 +324,7 @@ export class PetFetchComponent  implements OnInit, OnDestroy {
           obstacleType
         );
         
-        obstacle.setScale(0.1);
+        obstacle.setScale(0.15);
         obstacle.setOrigin(0.5, 1);
         obstacle.setImmovable(true);
         obstacle.setVelocityX(-200 - (this.gameSpeed * 10)); // Adjust speed based on game speed
@@ -238,22 +337,224 @@ export class PetFetchComponent  implements OnInit, OnDestroy {
         obstacle.checkWorldBounds = true;
         obstacle.outOfBoundsKill = true;
       }
+      
+      spawnCloud() {
+        if (this.gameOver) return;
+        
+        const { width, height } = this['game'].config;
+        
+        // Choose cloud type
+        const cloudType = Math.random() > 0.5 ? 'cloud1' : 'cloud2';
+        
+        // Random y position for cloud
+        const yPos = Phaser.Math.Between(30, height - 100);
+        
+        // Create the cloud
+        const cloud = this.clouds.create(
+          width + 50,
+          yPos,
+          cloudType
+        );
+        
+        // Random scale for clouds
+        const scale = Phaser.Math.FloatBetween(0.1, 0.3);
+        cloud.setScale(scale);
+        
+        // Clouds move slower than obstacles
+        cloud.setVelocityX(-100 - (this.gameSpeed * 5));
+        
+        // Set depth below player
+        cloud.setDepth(5);
+        
+        // Auto destroy when off screen
+        cloud.checkWorldBounds = true;
+        cloud.outOfBoundsKill = true;
+      }
+      
+      spawnPowerup() {
+        if (this.gameOver) return;
+        
+        const { width, height } = this['game'].config;
+        
+        // Don't spawn if already has powerup
+        if (this.hasLaserPower || this.hasEatPower) return;
+        
+        // Randomly choose powerup type
+        const powerupType = Math.random() > 0.5 ? 'laser-powerup' : 'eat-powerup';
+        
+        // Random y position for powerup (a bit higher to make player jump for it)
+        const yPos = Phaser.Math.Between(height - 120, height - 80);
+        
+        // Create the powerup
+        const powerup = this.powerups.create(
+          width + 50,
+          yPos,
+          powerupType
+        );
+        
+        powerup.setScale(0.1);
+        powerup.setVelocityX(-200 - (this.gameSpeed * 10));
+        powerup.powerupType = powerupType.split('-')[0]; // 'laser' or 'eat'
+        
+        // Auto destroy when off screen
+        powerup.checkWorldBounds = true;
+        powerup.outOfBoundsKill = true;
+      }
+      
+      collectPowerup(player: any, powerup: any) {
+        // Handle powerup collection
+        if (powerup.powerupType === 'laser') {
+          this.activateLaserPower();
+        } else if (powerup.powerupType === 'eat') {
+          this.activateEatPower();
+        }
+        
+        // Remove the powerup
+        powerup.destroy();
+      }
+      
+      activateLaserPower() {
+        this.hasLaserPower = true;
+        
+        // Change player texture to laser cat
+        this.player.setTexture('cat-laser');
+        this.player.powerState = 'laser';
+        
+        // Update powerup text
+
+        this.powerupText.setText('LASER EYES ACTIVE!');
+        
+        // Clear any existing timer
+        if (this.powerupTimers.laser) {
+          this.powerupTimers.laser.remove();
+        }
+        
+        // Set timer to deactivate
+        this.powerupTimers.laser = this['time'].delayedCall(this.powerupDuration, () => {
+          this.deactivateLaserPower();
+        }, [], this);
+      }
+      
+      deactivateLaserPower() {
+        this.hasLaserPower = false;
+        
+        // Only change texture back if not in another power state
+        if (this.player.powerState === 'laser') {
+          this.player.setTexture('cat-racer');
+          this.player.powerState = 'normal';
+        }
+        
+        // Clear powerup text if no other powerup is active
+        if (!this.hasEatPower) {
+          this.powerupText.setText('');
+        }
+      }
+      
+      activateEatPower() {
+        this.hasEatPower = true;
+        
+        // Change player texture to eating cat
+        this.player.setTexture('cat-eating');
+        this.player.powerState = 'eat';
+        
+        // Update powerup text
+        this.powerupText.setText('NOM NOM POWER ACTIVE!');
+        
+        // Clear any existing timer
+        if (this.powerupTimers.eat) {
+          this.powerupTimers.eat.remove();
+        }
+        
+        // Set timer to deactivate
+        this.powerupTimers.eat = this['time'].delayedCall(this.powerupDuration, () => {
+          this.deactivateEatPower();
+        }, [], this);
+      }
+      
+      deactivateEatPower() {
+        this.hasEatPower = false;
+        
+        // Only change texture back if not in another power state
+        if (this.player.powerState === 'eat') {
+          this.player.setTexture('cat-racer');
+          this.player.powerState = 'normal';
+        }
+        
+        // Clear powerup text if no other powerup is active
+        if (!this.hasLaserPower) {
+          this.powerupText.setText('');
+        }
+      }
+      
+      fireLaser() {
+        if (this.gameOver || !this.hasLaserPower) return;
+        
+        // Create laser beam
+        const laser = this.laserGroup.create(
+          this.player.x + 30, // Start from cat's eyes
+          this.player.y - 10,
+          'laser-beam'
+        );
+        
+        laser.setScale(0.5, 0.1);
+        laser.setVelocityX(600); // Fast moving laser
+        
+        // Auto destroy when off screen
+        laser.checkWorldBounds = true;
+        laser.outOfBoundsKill = true;
+        
+        // Add visual effect - tint
+        laser.setTint(0xff0000);
+      }
+      
+      laserHitObstacle(laser: any, obstacle: any) {
+        // Destroy both laser and obstacle
+        laser.destroy();
+        
+        // Add a score for destroying obstacle with laser
+        this.score += 2;
+        this.scoreText.setText('Score: ' + this.score);
+        
+        // Create explosion effect
+        const explosion = this['add'].particles('laser-beam', {
+          x: obstacle.x,
+          y: obstacle.y,
+          speed: { min: -100, max: 100 },
+          scale: { start: 0.1, end: 0 },
+          lifespan: 300,
+          quantity: 10
+        });
+        
+        // Set a timer to destroy the particle emitter
+        this['time'].delayedCall(300, () => {
+          explosion.destroy();
+        });
+        
+        // Destroy obstacle
+        obstacle.destroy();
+      }
+      
+      handleObstacleCollision(player: any, obstacle: any) {
+        // If player has eat power, eat the obstacle and get points
+        if (this.hasEatPower) {
+          this.score += 3;
+          this.scoreText.setText('Score: ' + this.score);
+          obstacle.destroy();
+          
+          // Play eating animation or effect here
+          
+          return;
+        }
+        
+        // Normal collision handling
+        this.endGame();
+      }
 
       increaseDifficulty() {
         if (this.gameOver) return;
         
         // Increase game speed
         this.gameSpeed += 0.5;
-        
-        // Decrease spawn time (up to a minimum interval)
-        const currentDelay = this.obstacleTimer.delay;
-        if (currentDelay > 800) {
-          this.obstacleTimer.delay = currentDelay - 100;
-        }
-      }
-
-      hitObstacle(player: any, obstacle: any) {
-        this.endGame();
       }
 
       endGame() {
@@ -319,6 +620,27 @@ export class PetFetchComponent  implements OnInit, OnDestroy {
         this.obstacles.getChildren().forEach((obstacle: any) => {
           if (obstacle.x < -obstacle.width) {
             this.obstacles.remove(obstacle, true, true);
+          }
+        });
+        
+        // Clean up clouds that are off-screen
+        this.clouds.getChildren().forEach((cloud: any) => {
+          if (cloud.x < -cloud.width) {
+            this.clouds.remove(cloud, true, true);
+          }
+        });
+        
+        // Clean up powerups that are off-screen
+        this.powerups.getChildren().forEach((powerup: any) => {
+          if (powerup.x < -powerup.width) {
+            this.powerups.remove(powerup, true, true);
+          }
+        });
+        
+        // Clean up lasers that are off-screen
+        this.laserGroup.getChildren().forEach((laser: any) => {
+          if (laser.x > this['game'].config.width + laser.width) {
+            this.laserGroup.remove(laser, true, true);
           }
         });
       }
