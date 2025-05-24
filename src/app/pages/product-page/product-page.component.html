@@ -1,54 +1,173 @@
-<div class="products-container px-3 py-12 max-w-screen-xl mx-auto bg-white"> 
-  <h2 class="text-4xl font-bold mb-10 text-[#440069] rounded-full text-center">Our Products</h2>
+<div class="products-container px-4 py-12 max-w-screen-xl mx-auto bg-white">
+  <!-- Loading indicator -->
+  <app-loading *ngIf="loading" [overlay]="true" [fullPage]="true"></app-loading>
 
-  <!-- Filters Section -->
-  <div class="flex justify-center gap-4 mb-6">
-    <select class="px-4 py-2  rounded-2xl   bg-white text-black cursor-pointer">
-      <option value="">Select Category</option>
-      <option *ngFor="let category of categories" [value]="category">{{ category }}</option>
-    </select>
-    <select class="px-4 py-2 rounded-2xl bg-white text-black  cursor-pointer" [disabled]="!selectedCategory">
-      <option value="">Select Sub-Category</option>
-      <option *ngFor="let subCategory of subCategories" [value]="subCategory">{{ subCategory }}</option>
-    </select>
+  <!-- Header Section with Animation -->
+  <div class="text-center mb-8 sm:mb-12">
+    <h2 class="text-3xl md:text-4xl font-bold text-[#440069] inline-block relative pb-3">
+      Our Products
+      <span class="absolute bottom-0 left-0 w-full h-1 bg-[#440069] rounded-full transform scale-x-0 transition-transform duration-500 group-hover:scale-x-100"></span>
+    </h2>
+    <p class="text-gray-600 mt-3 max-w-2xl mx-auto">Discover our collection of high-quality products designed for you</p>
   </div>
 
-  <!-- Product Grid -->
-  <div class="products-grid grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-    <div
-      class="product-card bg-white shadow-lg rounded-2xl overflow-hidden hover:shadow-2xl transition-shadow duration-300 cursor-pointer border border-gray-200"
-      *ngFor="let product of filteredProducts"
-      (click)="viewProduct(product.itemId)"
+  <!-- Mobile Filter Toggle Button -->
+  <div class="sm:hidden mb-4">
+    <button 
+      (click)="toggleFilters()" 
+      class="w-full flex items-center justify-center px-4 py-2 rounded-xl bg-[#440069] text-white transition-colors"
     >
-      <div class="relative group h-56 md:h-64 overflow-hidden">
-        <img
-          [src]="product.images?.[0] || 'assets/default-image.jpg'"
-          alt="Primary Product Image"
-          class="w-full h-full object-cover transition-opacity duration-500 group-hover:opacity-0"
-        />
-        <img
-          *ngIf="product.images?.[1]"
-          [src]="product.images?.[1] || 'assets/default-image.jpg'"
-          alt="Secondary Product Image"
-          class="w-full h-full object-cover absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-        />
+      <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 010 2H4a1 1 0 01-1-1zm0 8a1 1 0 011-1h16a1 1 0 010 2H4a1 1 0 01-1-1zm0 8a1 1 0 011-1h16a1 1 0 010 2H4a1 1 0 01-1-1z"></path>
+      </svg>
+      {{ showFilters ? 'Hide Filters' : 'Show Filters' }}
+      <svg 
+        class="w-4 h-4 ml-2 transition-transform duration-300" 
+        [ngClass]="{'rotate-180': showFilters}"
+        fill="none" 
+        stroke="currentColor" 
+        viewBox="0 0 24 24" 
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Filters Section - Hidden by default on mobile -->
+  <div class="filters-container mb-6" [ngClass]="{'hidden': !showFilters}" [ngStyle]="{'display': showFilters || window.innerWidth >= 640 ? 'block' : 'none'}">
+    <!-- Filter row - Side by side on mobile -->
+    <div class="flex flex-row justify-center gap-2 mb-4">
+      <div class="relative flex-1">
+        <select 
+          class="appearance-none w-full px-2 sm:px-4 py-2 sm:py-3 rounded-xl border-2 border-[#440069]/20 bg-white text-gray-800 text-sm cursor-pointer focus:outline-none focus:border-[#440069] transition-all"
+        >
+          <option value="">All Categories</option>
+          <option *ngFor="let category of categories" [value]="category">{{ category }}</option>
+        </select>
+        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-[#440069]">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+          </svg>
+        </div>
       </div>
-      <div class="p-5">
-        <h3 class="text-xl font-semibold text-[#26003a] mb-2 truncate">
-          {{ product.itemName }}
-        </h3>
-        <p class="text-gray-800 text-sm mb-4 truncate">
-          {{ product.itemDescription }}
-        </p>
-        <div class="flex justify-between items-center">
-          <p class="text-lg font-bold text-[#26003a]">₹{{ product.pricePerUnit }}</p>
-          <button
-            class="bg-[#440069] text-white px-4 py-2 rounded-full text-sm hover:bg-[#7a0cb5] transition-colors duration-300"
-          >
-            View
-          </button>
+      
+      <div class="relative flex-1">
+        <select 
+          class="appearance-none w-full px-2 sm:px-4 py-2 sm:py-3 rounded-xl border-2 border-[#440069]/20 bg-white text-gray-800 text-sm cursor-pointer focus:outline-none focus:border-[#440069] transition-all"
+          [disabled]="!selectedCategory"
+         >
+          <option value="">All {{ selectedCategory ? selectedCategory : '' }}</option>
+          <option *ngFor="let subCategory of subCategories" [value]="subCategory">{{ subCategory }}</option>
+        </select>
+        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-[#440069]">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+          </svg>
         </div>
       </div>
     </div>
+    
+    <!-- Reset Filters Button -->
+    <div *ngIf="selectedCategory || selectedSubCategory" class="flex justify-center mb-2">
+      <button 
+        (click)="resetFilters()" 
+        class="px-3 py-2 text-xs rounded-xl border-2 border-[#440069]/20 text-[#440069] hover:bg-[#440069]/10 transition-colors">
+        <div class="flex items-center justify-center">
+          <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+          Clear Filters
+        </div>
+      </button>
+    </div>
   </div>
+
+  <!-- Products Count -->
+  <div class="text-gray-600 mb-6 text-center sm:text-left">
+    <p>Showing {{ filteredProducts.length }} product{{ filteredProducts.length !== 1 ? 's' : '' }}</p>
+  </div>
+
+  <!-- Product Grid - Already set for 2 columns on mobile -->
+  <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
+    <!-- Product Card -->
+    <div
+      *ngFor="let product of filteredProducts"
+      class="product-card bg-white shadow-md hover:shadow-xl rounded-2xl overflow-hidden transition-all duration-300 transform hover:-translate-y-1 cursor-pointer border border-gray-100"
+      (click)="viewProduct(product.itemId)"
+    >
+      <!-- Image Container with Hover Effect -->
+      <div class="relative group h-40 sm:h-48 md:h-56 lg:h-64 overflow-hidden bg-gray-100">
+        <img
+          [src]="product.images?.[0] || 'assets/default-image.jpg'"
+          alt="{{ product.itemName }}"
+          class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+          onError="this.src='assets/default-image.jpg'"
+        />
+        
+        <!-- Second Image Overlay -->
+        <img
+          *ngIf="product.images?.[1]"
+          [src]="product.images?.[1]"
+          alt="{{ product.itemName }} - Secondary"
+          class="w-full h-full object-cover absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700"
+          onError="this.src='assets/default-image.jpg'"
+        />
+        
+        <!-- Quick View Button -->
+        <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#440069] to-transparent p-2 sm:p-3 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+          <button class="w-full text-white text-xs sm:text-sm font-medium py-1 sm:py-2 rounded-lg flex items-center justify-center">
+            <svg class="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+            </svg>
+            <span class="hidden sm:inline">Quick View</span>
+            <span class="sm:hidden">View</span>
+          </button>
+        </div>
+      </div>
+      
+      <!-- Product Details -->
+      <div class="p-2 sm:p-4">
+        <div class="flex flex-col h-full">
+          <div>
+            <p class="text-xs text-[#440069] font-medium mb-0.5 sm:mb-1">{{ product.category }}</p>
+            <h3 class="text-sm sm:text-lg font-semibold text-gray-800 mb-1 sm:mb-2 line-clamp-1 hover:text-[#440069] transition-colors">
+              {{ product.itemName }}
+            </h3>
+            <p class="text-xs sm:text-sm text-gray-600 mb-2 sm:mb-4 line-clamp-2 h-8 sm:h-10">
+              {{ product.itemDescription }}
+            </p>
+          </div>
+          
+          <div class="mt-auto pt-2 sm:pt-3 border-t border-gray-100 flex justify-between items-center">
+            <p class="text-base sm:text-lg font-bold text-[#440069]">₹{{ product.pricePerUnit }}</p>
+            <button
+              class="bg-[#440069] text-white px-2 sm:px-4 py-1 sm:py-2 rounded-full text-xs sm:text-sm hover:bg-[#7a0cb5] transition-all duration-300 flex items-center"
+            >
+              <span>View</span>
+              <svg class="w-3 h-3 sm:w-4 sm:h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="filteredProducts.length === 0" class="col-span-2 md:col-span-3 lg:col-span-4 py-12 text-center">
+      <svg class="w-16 h-16 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+      </svg>
+      <h3 class="text-lg font-medium text-gray-700">No products found</h3>
+      <p class="text-gray-500 mt-2">Try changing your filters or check back later</p>
+      <button (click)="resetFilters()" class="mt-4 px-4 py-2 text-[#440069] border border-[#440069] rounded-lg hover:bg-[#440069] hover:text-white transition-colors">
+        Reset Filters
+      </button>
+    </div>
+  </div>
+  
+  <!-- Pagination (Optional) -->
+
 </div>

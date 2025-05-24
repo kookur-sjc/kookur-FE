@@ -68,4 +68,6 @@ export class HomePageComponent {
     }, 1000); // Match fade-out duration
   }
 
+  
+
 }

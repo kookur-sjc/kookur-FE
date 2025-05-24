@@ -17,6 +17,8 @@ import { FlappMemeGameComponent } from './pages/flapp-meme-game/flapp-meme-game.
 import { GamesComponent } from './pages/games/games.component';
 import { PetFightComponent } from './pages/pet-fight/pet-fight.component';
 import { PetFetchComponent } from './pages/pet-fetch/pet-fetch.component';
+import { CricketGameComponent } from './pages/cricket-game/cricket-game.component';
+import { DoodleComponent } from './pages/doodle/doodle.component';
 
 export const routes: Routes = [
    {path: '', component: HomePageComponent},
@@ -41,7 +43,9 @@ export const routes: Routes = [
       ]
     },
     {path: 'snake', component: PetFightComponent},
-    {path: 'fetch', component: PetFetchComponent}
+    {path: 'fetch', component: PetFetchComponent},
+    {path: 'cricket', component: CricketGameComponent},
+    {path: 'doodle', component: DoodleComponent}, // Assuming you have a DoodleComponent
 
 
 ];

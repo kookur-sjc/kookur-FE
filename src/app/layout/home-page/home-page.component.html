@@ -1,89 +1,168 @@
-<div class="home-container flex flex-col items-center bg-white min-h-screen relative overflow-hidden">
-  <div class="welcome-section flex flex-col md:flex-row items-center justify-between z-10 p-6 text-left bg-white">
-    <!-- Text Section -->
-    <div class="text-section w-full md:w-2/6 p-4 text-center md:text-left">
-      <h1 class="font-serif text-black text-5xl md:text-[100px] text-[#373e48] leading-tight break-words">
-        You have been chosen, Hooman
+<div class="home-container">
+  <!-- Welcome Section -->
+  <div class="welcome-section">
+    <div class="text-section">
+      <h1 class="headline">
+        <span class="headline-word">You have</span>
+        <span class="headline-word">been</span>
+        <span class="headline-word">chosen,</span>
+        <span class="headline-word">Hooman</span>
       </h1>
+      <button (click)="navigateToFeature('videos')" class="get-started-btn">Get Started</button>
     </div>
 
+        <!-- <div class="media-container">
+      <div class="tube-container">
+        <div class="image-slider">
+          <div class="slide">
+            <img src="assets/images/dog-eyes1.png" alt="Dog Eyes 1" class="slide-image">
+          </div>
+          <div class="slide">
+            <img src="assets/images/cat-eyes1.png" alt="Cat Eyes 1" class="slide-image">
+          </div>
+          <div class="slide">
+            <img src="assets/images/dog-eyes2.png" alt="Dog Eyes 2" class="slide-image">
+          </div>
+          <div class="slide">
+            <img src="assets/images/cat-eyes2.png" alt="Cat Eyes 2" class="slide-image">
+          </div>
+        </div>
+        <div class="sliding-door left">
+          <div class="door-handle"></div>
+        </div>
+        <div class="sliding-door right">
+          <div class="door-handle"></div>
+        </div> -->
     <!-- Video Section -->
     <div class="media-container w-full md:w-4/6 relative mt-4 md:mt-0">
-      <div class="w-full h-60 md:h-96 border-black overflow-hidden shadow-md items-center" style="border-top-left-radius: 20% 50%; border-bottom-left-radius: 20% 50%;">
+      <div class="w-full h-60 md:h-96 border-black overflow-hidden shadow-md items-center" style="border-radius: 20% / 50%;">
         <video autoplay loop muted playsinline class="w-full h-full object-cover">
           <source src="https://kookurvideostorage.s3.ap-south-1.amazonaws.com/2023-11-30_13-23-57_UTC.mp4" type="video/mp4" />
         </video>
       </div>
     </div>
   </div>
-
+  
   <!-- Features Section -->
-  <div class="features-section flex flex-wrap justify-center items-center w-full p-6 z-10 gap-6">
-    <div class="feature-box w-full sm:w-2/3 lg:w-1/4 relative cursor-pointer">
-      <div (click)="navigateToFeature('videos')" class="w-full h-60 sm:h-80 overflow-hidden shadow-md" style="border-top-left-radius: 130% 100%; border-top-right-radius: 130% 100%;" >
-        <video autoplay loop muted playsinline class="w-full h-full object-cover">
-          <source src="https://kookurvideostorage.s3.ap-south-1.amazonaws.com/2024-02-16_18-26-14_UTC.mp4" type="video/mp4" />
+  <div class="features-section">
+    <div class="feature-box" (click)="navigateToFeature('videos')">
+      <div class="feature-video-container">
+        <video class="feature-video" autoplay loop muted playsinline>
+          <source src="https://kookurvideostorage.s3.ap-south-1.amazonaws.com/2024-02-16_18-26-14_UTC.mp4" type="video/mp4">
         </video>
-        <h2 class="absolute bottom-20 left-1/2 transform -translate-x-1/2 bg-[#9415d8] text-white rounded-full px-4 py-2 text-sm md:text-[15px] font-bold">Mood Videos</h2>
+        <h2 class="feature-title">Mood Videos</h2>
       </div>
-      <p class="text-center mt-4 text-sm md:text-base">Discover videos tailored to lift your mood and energize your day.</p>
+      <p class="feature-description">Discover videos tailored to lift your mood and energize your day.</p>
     </div>
-
-    <div class="feature-box w-full sm:w-2/3 lg:w-1/4 relative cursor-pointer">
-      <div (click)="navigateToFeature('shop')" class="w-full h-60 sm:h-80 overflow-hidden shadow-md" style="border-top-left-radius: 130% 100%; border-top-right-radius: 130% 100%;">
-        <video autoplay loop muted playsinline class="w-full h-full object-cover">
-          <source src="https://kookurvideostorage.s3.ap-south-1.amazonaws.com/2023-11-30_20-34-18_UTC.mp4" type="video/mp4" />
+    
+    <div class="feature-box" (click)="navigateToFeature('shop')">
+      <div class="feature-video-container">
+        <video class="feature-video" autoplay loop muted playsinline>
+          <source src="https://kookurvideostorage.s3.ap-south-1.amazonaws.com/2023-11-30_20-34-18_UTC.mp4" type="video/mp4">
         </video>
-        <h2 class="absolute bottom-20 left-1/2 transform -translate-x-1/2 bg-[#9415d8] text-white rounded-full px-4 py-2 text-sm md:text-[15px] font-bold">Shop</h2>
+        <h2 class="feature-title">Shop</h2>
       </div>
-      <p class="text-center mt-4 text-sm md:text-base">Support a cause by purchasing paints and other products.</p>
+      <p class="feature-description">Support a cause by purchasing paints and other products.</p>
     </div>
-
-    <div class="feature-box w-full sm:w-2/3 lg:w-1/4 relative cursor-pointer">
-      <div  (click)="navigateToFeature('games')" class="w-full h-60 sm:h-80 overflow-hidden shadow-md" style="border-top-left-radius: 130% 100%; border-top-right-radius: 130% 100%;">
-        <video autoplay loop muted playsinline class="w-full h-full object-cover">
-          <source src="https://kookurvideostorage.s3.ap-south-1.amazonaws.com/2023-12-03_16-25-44_UTC.mp4" type="video/mp4" />
+    
+    <div class="feature-box" (click)="navigateToFeature('games')">
+      <div class="feature-video-container">
+        <video class="feature-video" autoplay loop muted playsinline>
+          <source src="https://kookurvideostorage.s3.ap-south-1.amazonaws.com/2023-12-03_16-25-44_UTC.mp4" type="video/mp4">
         </video>
-        <h2 class="absolute bottom-20 left-1/2 transform -translate-x-1/2 bg-[#9415d8] text-white rounded-full px-4 py-2 text-sm md:text-[15px] font-bold">Games</h2>
+        <h2 class="feature-title">Games</h2>
       </div>
-      <p class="text-center mt-4 text-sm md:text-base">Have fun with interactive games designed for everyone.</p>
+      <p class="feature-description">Have fun with interactive games designed for everyone.</p>
     </div>
   </div>
-
-  <!-- Feedback Section -->
-  <div class="feedback-section w-5/6 p-6 bg-[#c0a4d0] rounded-xl mx-4 mt-6">
-    <h2 class="text-xl md:text-3xl font-bold mb-12 text-center text-white ">What People Are Saying</h2>
-    <div class="flex flex-wrap justify-center gap-4">
-      <div class="relative feedback-card bg-white bg-opacity-75 shadow-md rounded-xl p-4 max-w-xs">
-        <div class="absolute -top-6 left-1/2 transform -translate-x-1/2 w-12 h-12 md:w-16 md:h-16 rounded-full bg-[#440069] flex items-center justify-center">
-          <div class="w-6 h-6 md:w-10 md:h-10 bg-gray-300 rounded-full"></div>
+  
+  <!-- Feedback Section with Floating Candies -->
+  <div class="feedback-section">
+    <h2 class="feedback-title">What People Are Saying</h2>
+    
+    <!-- Floating Candy Decorations -->
+    <svg class="floating-candy candy-1" viewBox="0 0 100 100">
+      <circle cx="50" cy="50" r="40" fill="#ffb6c1" />
+      <circle cx="50" cy="50" r="30" fill="#ff69b4" />
+      <path d="M30,50 Q50,30 70,50 Q50,70 30,50" fill="#ff1493" />
+    </svg>
+    
+    <svg class="floating-candy candy-2" viewBox="0 0 100 100">
+      <circle cx="50" cy="50" r="40" fill="#add8e6" />
+      <circle cx="50" cy="50" r="30" fill="#87ceeb" />
+      <path d="M30,50 Q50,30 70,50 Q50,70 30,50" fill="#1e90ff" />
+    </svg>
+    
+    <svg class="floating-candy candy-3" viewBox="0 0 100 100">
+      <circle cx="50" cy="50" r="40" fill="#90ee90" />
+      <circle cx="50" cy="50" r="30" fill="#3cb371" />
+      <path d="M30,50 Q50,30 70,50 Q50,70 30,50" fill="#2e8b57" />
+    </svg>
+    
+    <svg class="floating-candy candy-4" viewBox="0 0 100 100">
+      <circle cx="50" cy="50" r="40" fill="#ffa07a" />
+      <circle cx="50" cy="50" r="30" fill="#ff7f50" />
+      <path d="M30,50 Q50,30 70,50 Q50,70 30,50" fill="#ff6347" />
+    </svg>
+    
+    <div class="feedback-container">
+      <div class="feedback-card">
+        <div class="avatar-container">
+          <div class="avatar-placeholder"></div>
         </div>
-        <p class="mt-4 md:mt-6 italic text-black text-center text-sm md:text-base">"Kookur has completely transformed my mood on tough days!"</p>
-        <p class="text-right mt-2 md:mt-4 font-bold text-black text-xs md:text-base">- Sarah T.</p>
+        
+        <div class="paw-rating">
+          <img class="paw-print" style="--delay: 0" src="assets/images/pet-paw.png" alt="Paw Rating">
+          <img class="paw-print" style="--delay: 1" src="assets/images/pet-paw.png" alt="Paw Rating">
+          <img class="paw-print" style="--delay: 2" src="assets/images/pet-paw.png" alt="Paw Rating">
+          <img class="paw-print" style="--delay: 3" src="assets/images/pet-paw.png" alt="Paw Rating">
+          <img class="paw-print" style="--delay: 4" src="assets/images/pet-paw.png" alt="Paw Rating">
+        </div>
+        
+        <p class="feedback-text">"Kookur has completely transformed my mood on tough days!"</p>
+        <p class="feedback-author">- Sarah T.</p>
       </div>
-
-      <div class="relative feedback-card bg-white bg-opacity-75 shadow-md rounded-xl p-4 max-w-xs">
-        <div class="absolute -top-6 left-1/2 transform -translate-x-1/2 w-12 h-12 md:w-16 md:h-16 rounded-full bg-[#440069] flex items-center justify-center">
-          <div class="w-6 h-6 md:w-10 md:h-10 bg-gray-300 rounded-full"></div>
+      
+      <div class="feedback-card">
+        <div class="avatar-container">
+          <div class="avatar-placeholder"></div>
         </div>
-        <p class="mt-4 md:mt-6 italic text-black text-center text-sm md:text-base">"Supporting causes while shopping is such a brilliant idea!"</p>
-        <p class="text-right mt-2 md:mt-4 font-bold text-black text-xs md:text-base">- John D.</p>
+        
+        <div class="paw-rating">
+          <img class="paw-print" style="--delay: 1" src="assets/images/pet-paw.png" alt="Paw Rating">
+          <img class="paw-print" style="--delay: 2" src="assets/images/pet-paw.png" alt="Paw Rating">
+          <img class="paw-print" style="--delay: 0" src="assets/images/pet-paw.png" alt="Paw Rating">
+          <img class="paw-print" style="--delay: 3" src="assets/images/pet-paw.png" alt="Paw Rating">
+          <img class="paw-print" style="--delay: 4" src="assets/images/pet-paw.png" alt="Paw Rating">
+        </div>
+        
+        <p class="feedback-text">"Supporting causes while shopping is such a brilliant idea!"</p>
+        <p class="feedback-author">- John D.</p>
       </div>
-
-      <div class="relative feedback-card bg-white bg-opacity-75 shadow-md rounded-xl p-4 max-w-xs">
-        <div class="absolute -top-6 left-1/2 transform -translate-x-1/2 w-12 h-12 md:w-16 md:h-16 rounded-full bg-[#440069] flex items-center justify-center">
-          <div class="w-6 h-6 md:w-10 md:h-10 bg-gray-300 rounded-full"></div>
+      
+      <div class="feedback-card">
+        <div class="avatar-container">
+          <div class="avatar-placeholder"></div>
         </div>
-        <p class="mt-4 md:mt-6 italic text-black text-center text-sm md:text-base">"The games are addictive and super fun for the family!"</p>
-        <p class="text-right mt-2 md:mt-4 font-bold text-black text-xs md:text-base">- Emma W.</p>
+        
+        <div class="paw-rating">
+          <img class="paw-print" style="--delay: 2" src="assets/images/pet-paw.png" alt="Paw Rating">
+          <img class="paw-print" style="--delay: 0" src="assets/images/pet-paw.png" alt="Paw Rating">
+          <img class="paw-print" style="--delay: 3" src="assets/images/pet-paw.png" alt="Paw Rating">
+          <img class="paw-print" style="--delay: 1" src="assets/images/pet-paw.png" alt="Paw Rating">
+          <img class="paw-print" style="--delay: 4" src="assets/images/pet-paw.png" alt="Paw Rating">
+        </div>
+        
+        <p class="feedback-text">"The games are addictive and super fun for the family!"</p>
+        <p class="feedback-author">- Emma W.</p>
       </div>
     </div>
   </div>
-
+  
   <!-- Donation Section -->
-  <div class="donation-section bg-[#440069] w-5/6 p-6 text-center text-white rounded-2xl mx-4 my-6">
-    <h2 class="text-xl md:text-3xl font-bold mb-4">Support Our Mission</h2>
-    <p class="mb-4 md:mb-6 text-sm md:text-base">Your contributions help us make a difference!</p>
-    <button class="bg-white text-[#440069] px-4 md:px-6 py-2 md:py-3 rounded-full shadow-md font-bold hover:bg-gray-100">Donate Now</button>
+  <div class="donation-section">
+    <h2 class="donation-title">Support Our Mission</h2>
+    <p class="donation-description">Your contributions help us make a difference!</p>
+    <button class="donate-button">Donate Now</button>
   </div>
 </div>

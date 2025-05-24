@@ -1,15 +1,17 @@
-import { NgFor } from '@angular/common';
-import { Component } from '@angular/core';
+import { NgFor, NgIf } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { LoadingComponent } from '../../shared/components/loading/loading.component';
 
 @Component({
   selector: 'app-games',
   standalone: true,
-  imports: [NgFor],
+  imports: [NgFor, NgIf, LoadingComponent],
   templateUrl: './games.component.html',
   styleUrl: './games.component.scss'
 })
-export class GamesComponent {
+export class GamesComponent implements OnInit {
+  loading = true;
   games: any[] = [
     {
       title: 'Meme Flappy Game',
@@ -33,7 +35,22 @@ export class GamesComponent {
 
   constructor(private router: Router) {}
 
+  ngOnInit() {
+    // Simulate loading time
+    setTimeout(() => {
+      this.loading = false;
+    }, 1000);
+  }
+
   navigateToGame(route: string) {
-    this.router.navigate([route]);
+    this.loading = true;
+    this.router.navigate([route]).then(() => {
+      // In a real app, this would be handled by route guards or resolvers
+      this.loading = false;
+    });
+  }
+
+  handleImageError(event: any) {
+    event.target.src = 'assets/images/default-game-image.jpg';
   }
 }

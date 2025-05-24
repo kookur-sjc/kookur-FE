@@ -1,57 +1,134 @@
-<div class="product-details-container flex flex-col lg:flex-row px-6 py-12 max-w-screen-xl mx-auto bg-white">
-  <!-- Image Section -->
-  <div class="image-section w-full lg:w-1/3 flex flex-col items-center">
-    <div class="main-image relative w-full h-[60vh] overflow-hidden">
-      <img
-        [src]="product?.images?.[currentImageIndex]"
-        alt="Product Image"
-        class="w-full h-full object-cover rounded-2xl"
-      />
-    </div>
-   
-    <!-- Thumbnail Section -->
-    <div class="thumbnails flex space-x-2 overflow-x-auto mt-4">
-      <img
-        *ngFor="let image of product?.images; let i = index"
-        [src]="image"
-        alt="Thumbnail"
-        class="w-16 h-16 object-cover cursor-pointer border border-gray-300 hover:border-[#9415d8] rounded-lg"
-        (click)="selectImage(i)"
-      />
-    </div>
-     <!-- Add to Cart / Buy Now Section -->
-     <div class="actions mt-4 flex justify-center space-x-4 w-full">
-      <button (click)="addToCart(product)" class="bg-[#440069] text-white px-6 py-3 rounded-full w-full hover:bg-[#7a0cb5] transition-colors duration-300 hover:bg-gray-100">
-        Add to Cart
-      </button>
-      <button class="bg-[#00694e] text-white px-6 py-3 rounded-full w-full hover:bg-[#7a0cb5] transition-colors duration-300 hover:bg-[#00b84b]" (click)="buyNow(product)">
-        Buy Now
-      </button>
-    </div>
-  </div>
+<div class="product-details-container px-6 py-8 max-w-screen-xl mx-auto bg-white">
+  <!-- Loading indicator -->
+  <app-loading *ngIf="loading" [overlay]="true"></app-loading>
 
-  <!-- Details Section -->
-  <div class="details-section w-full lg:w-2/3 px-4 lg:px-8 mt-8 lg:mt-0">
-    <h1 class="text-3xl font-bold text-[#440069]  mb-4">{{ product?.itemName }}</h1>
-    <p class="text-gray-900 mb-4">{{ product?.itemDescription }}</p>
-    <p class="text-[#440069]  text-2xl font-semibold mb-8">₹{{ product?.pricePerUnit }}</p>
-    <!-- Additional Details -->
-    <div>
-      <p class="text-gray-800">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-      </p>
+  <!-- Include Notification Component -->
+  <!-- [notificationType] and [notificationMessage] and [showNotification] are bound to component properties -->
+  
+  <div class="flex flex-col lg:flex-row space-y-8 lg:space-y-0 lg:space-x-8">
+    <!-- Image Section -->
+    <div class="image-section w-full lg:w-1/2">
+      <div class="main-image relative w-full h-[60vh] overflow-hidden border border-gray-200 rounded-2xl">
+        <img
+          [src]="product?.images?.[currentImageIndex]"
+          alt="Product Image"
+          class="w-full h-full object-contain"
+          (error)="handleImageError($event)"
+        />
+        <!-- Navigation Arrows -->
+        <button 
+          *ngIf="(product?.images?.length || 0) > 1"
+          (click)="previousImage()" 
+          class="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white/80 p-2 rounded-full hover:bg-white"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-[#440069]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+        <button 
+          *ngIf="(product?.images?.length || 0) > 1"
+          (click)="nextImage()" 
+          class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white/80 p-2 rounded-full hover:bg-white"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-[#440069]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+      </div>
+     
+      <!-- Thumbnail Section -->
+      <div class="thumbnails flex space-x-3 overflow-x-auto mt-4 py-2">
+        <div
+          *ngFor="let image of product?.images; let i = index"
+          [class.border-[#9415d8]]="i === currentImageIndex"
+          class="min-w-[80px] h-20 border-2 rounded-lg cursor-pointer transition-all duration-200 hover:opacity-90"
+          (click)="selectImage(i)"
+        >
+          <img
+            [src]="image"
+            alt="Thumbnail"
+            class="w-full h-full object-cover rounded-lg"
+          />
+        </div>
+      </div>
     </div>
     
-  <div class="reviews-section mt-8 overflow-hidden">
-
-    <div class="reviews-slider flex space-x-4 animate-scroll">
-      <div *ngFor="let review of reviews" class="review-card bg-white shadow-md rounded-2xl p-4 min-w-[250px]">
-        <p class="text-gray-800 font-semibold">{{ review.user}}</p>
-        <p class="text-gray-600 text-sm italic">"{{ review.comment }}"</p>
-        <p class="text-yellow-500 text-lg">★★★★★</p>
+    <!-- Details Section -->
+    <div class="details-section w-full lg:w-1/2">
+      <h1 class="text-3xl font-bold text-[#440069] mb-2">{{ product?.itemName }}</h1>
+      
+      <div class="flex items-center mb-4">
+        <div class="flex text-yellow-400">
+          <svg *ngFor="let star of getStars(4)" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+          </svg>
+        </div>
+        <span class="ml-2 text-gray-600">({{ reviews.length }} reviews)</span>
+      </div>
+      
+      <p class="text-[#440069] text-3xl font-bold mb-6">₹{{ product?.pricePerUnit }}</p>
+      
+      <div class="mb-6">
+        <h3 class="text-lg font-semibold mb-2 text-gray-800">Description</h3>
+        <p class="text-gray-700 leading-relaxed">{{ product?.itemDescription }}</p>
+      </div>
+      
+      <div class="mb-6">
+        <h3 class="text-lg font-semibold mb-2 text-gray-800">Category</h3>
+        <div class="flex space-x-2">
+          <span class="px-3 py-1 bg-purple-100 text-[#440069] rounded-full text-sm">{{ product?.category }}</span>
+          <span *ngIf="product?.subCategory" class="px-3 py-1 bg-purple-100 text-[#440069] rounded-full text-sm">{{ product?.subCategory }}</span>
+        </div>
+      </div>
+      
+      <!-- Quantity Selector could be added here -->
+      
+      <!-- Actions -->
+      <div class="actions flex space-x-4 mt-6">
+        <button 
+          (click)="addToCart(product)" 
+          class="flex-1 bg-[#440069] text-white px-6 py-3 rounded-full hover:bg-[#7a0cb5] transition-colors duration-300 flex items-center justify-center"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+          </svg>
+          Add to Cart
+        </button>
+        <button 
+          (click)="buyNow(product)" 
+          class="flex-1 bg-[#00694e] text-white px-6 py-3 rounded-full hover:bg-[#00b84b] transition-colors duration-300 flex items-center justify-center"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+          </svg>
+          Buy Now
+        </button>
       </div>
     </div>
   </div>
-  </div>
 
+  <!-- Reviews Section -->
+  <div class="reviews-section mt-12">
+    <h2 class="text-2xl font-bold text-[#440069] mb-6">Customer Reviews</h2>
+    
+    <div class="review-list space-y-4">
+      <div *ngFor="let review of reviews; trackBy: trackByReview" class="review bg-gray-50 p-4 rounded-lg">
+        <div class="flex items-center justify-between mb-2">
+          <div class="flex items-center">
+            <div class="avatar bg-[#440069] text-white rounded-full w-8 h-8 flex items-center justify-center font-medium">
+              {{review.user.charAt(0)}}
+            </div>
+            <span class="font-semibold ml-2">{{review.user}}</span>
+          </div>
+          <div class="flex text-yellow-400">
+            <svg *ngFor="let star of getStars(review.rating)" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+            </svg>
+          </div>
+        </div>
+        <p class="text-gray-700">{{review.comment}}</p>
+        <div class="text-gray-400 text-sm mt-2">{{review.date}}</div>
+      </div>
+    </div>
+  </div>
 </div>

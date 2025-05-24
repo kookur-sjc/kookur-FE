@@ -1,19 +1,28 @@
-<div class="games-container">
-    <h1 class="page-title">Awesome Games Collection</h1>
-    <p class="page-subtitle">Explore and enjoy our exciting game lineup!</p>
-    
-    <div class="games-grid">
-      <div 
-        *ngFor="let game of games" 
-        class="game-card" 
-        (click)="navigateToGame(game.route)"
-      >
-        <img [src]="game.imagePath" [alt]="game.title" class="game-image">
-        <div class="game-details">
-          <h2 class="game-title">{{ game.title }}</h2>
-          <p class="game-description">{{ game.description }}</p>
-          <button class="play-button">Play Now</button>
-        </div>
+<div class="games-container p-6">
+  <!-- Loading indicator -->
+  <app-loading *ngIf="loading" [overlay]="true"></app-loading>
+
+  <h2 class="text-3xl font-bold text-center mb-8 text-[#440069]">Fun Games</h2>
+  
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div *ngFor="let game of games" 
+         class="game-card bg-white rounded-xl shadow-md overflow-hidden cursor-pointer transform transition-transform hover:scale-105"
+         (click)="navigateToGame(game.route)">
+      
+      <div class="relative h-48">
+        <img [src]="game.imagePath" 
+             alt="{{game.title}}"
+             class="w-full h-full object-cover"
+             (error)="handleImageError($event)">
+      </div>
+      
+      <div class="p-4">
+        <h3 class="text-xl font-semibold text-[#440069] mb-2">{{game.title}}</h3>
+        <p class="text-gray-600">{{game.description}}</p>
+        <button class="mt-4 bg-[#440069] text-white px-4 py-2 rounded-lg hover:bg-purple-800 transition">
+          Play Now
+        </button>
       </div>
     </div>
   </div>
+</div>

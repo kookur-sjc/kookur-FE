@@ -27,7 +27,12 @@
             "inlineStyleLanguage": "scss",
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              {
+                "glob": "**/*",
+                "input": "src/doodle-cricket/Cricket-Doodle-Game",
+                "output": "/assets/doodle-cricket"
+              }
             ],
             "styles": [
               "src/styles.scss"
