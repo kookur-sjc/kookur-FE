@@ -22,13 +22,13 @@ export class GamesComponent implements OnInit {
     {
       title: 'Game 2',
       description: 'Description of Game 2',
-      route: '/game2',
+      route: 'games/snake',
       imagePath: 'assets/images/game2-thumbnail.png'
     },
     {
       title: 'Game 3',
       description: 'Description of Game 3',
-      route: '/game3',
+      route: 'games/fetch',
       imagePath: 'assets/images/game3-thumbnail.png'
     }
   ];

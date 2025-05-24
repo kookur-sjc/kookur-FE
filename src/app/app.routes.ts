@@ -38,12 +38,13 @@ export const routes: Routes = [
       children: [
         { path: '', component: GamesComponent },
         { path: 'flapp-meme-game', component: FlappMemeGameComponent },
+        {path: 'snake', component: PetFightComponent},
+        {path: 'fetch', component: PetFetchComponent},
         // You can easily add more games here
         // { path: 'another-game', component: AnotherGameComponent }
       ]
     },
-    {path: 'snake', component: PetFightComponent},
-    {path: 'fetch', component: PetFetchComponent},
+    
     {path: 'cricket', component: CricketGameComponent},
     {path: 'doodle', component: DoodleComponent}, // Assuming you have a DoodleComponent
 
