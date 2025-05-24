@@ -30,7 +30,7 @@
               "src/assets",
               {
                 "glob": "**/*",
-                "input": "src/doodle-cricket/Cricket-Doodle-Game",
+                "input": "src/doodle-cricket",
                 "output": "/assets/doodle-cricket"
               }
             ],
