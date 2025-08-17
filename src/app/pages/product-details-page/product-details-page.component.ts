@@ -161,16 +161,16 @@ export class ProductDetailsPageComponent implements OnInit {
 
   buyNow(product: any) {
     // Check if user is authenticated
-    if (!this.isAuthenticated) {
-      this.showNotification = true;
-      this.notificationMessage = 'Please log in to make a purchase';
-      this.notificationType = 'error';
-      setTimeout(() => {
-        this.showNotification = false;
-        this.router.navigate(['/signup']);
-      }, 0);
-      return;
-    }
+    // if (!this.isAuthenticated) {
+    //   this.showNotification = true;
+    //   this.notificationMessage = 'Please log in to make a purchase';
+    //   this.notificationType = 'error';
+    //   setTimeout(() => {
+    //     this.showNotification = false;
+    //     this.router.navigate(['/signup']);
+    //   }, 0);
+    //   return;
+    // }
 
     this.router.navigate(['/order'], {
       queryParams: { productId: product.itemId, quantity: 1 },

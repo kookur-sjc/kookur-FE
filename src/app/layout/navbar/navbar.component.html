@@ -1,89 +1,146 @@
-<nav class="w-full h-15 py-2 bg-white text-black flex justify-between items-center shadow-md">
+<nav class="fixed top-0 left-0 right-0 z-50 w-full py-3 px-4 md:px-6 backdrop-blur-lg border-b shadow-lg transition-all duration-300"
+     [ngClass]="isOrangeCatPage ? 'orange-cat-nav' : ''">
   <!-- Logo -->
-  <div class="text-lg font-bold text-[27px] text-[#9415d8] px-4">
-      <a href="#">KOOKUR</a>
-  </div>
+  <div class="flex justify-between items-center max-w-7xl mx-auto">
+    <!-- Brand Logo -->
+    <div class="flex items-center">
+      <a href="#" class="logo-text text-2xl md:text-3xl font-bold hover:scale-105 transition-all duration-300"
+         [ngClass]="isOrangeCatPage ? 'orange-cat-logo' : 'bg-gradient-to-r from-purple-600 via-purple-500 to-pink-400 bg-clip-text text-transparent'">
+        KOOKUR
+      </a>
+    </div>
 
-  <!-- Desktop Links -->
-  <div class="hidden md:flex space-x-6">
-      <a href="#" class="relative px-3 py-2 rounded-full border border-transparent transition duration-300 hover:border-[#9415d8] hover:text-[#9415d8]">
-          Home
+    <!-- Desktop Navigation -->
+    <div class="hidden md:flex items-center space-x-8">
+      <a href="#" 
+         class="nav-link px-4 py-2 font-medium rounded-lg transition-all duration-300 hover:scale-105"
+         [ngClass]="isOrangeCatPage ? 'text-orange-400 hover:text-orange-300 hover:bg-orange-500/10' : 'text-gray-700 hover:text-purple-600 hover:bg-purple-50/50'">
+        Home
       </a>
-      <a href="/all-products" *ngIf="!isProductPage" class="relative px-3 py-2 rounded-full border border-transparent transition duration-300 hover:border-[#9415d8] hover:text-[#9415d8]">
-          Shop
+      <a href="/all-products" 
+         *ngIf="!isProductPage" 
+         class="nav-link px-4 py-2 font-medium rounded-lg transition-all duration-300 hover:scale-105"
+         [ngClass]="isOrangeCatPage ? 'text-orange-400 hover:text-orange-300 hover:bg-orange-500/10' : 'text-gray-700 hover:text-purple-600 hover:bg-purple-50/50'">
+        Shop
       </a>
-      <a href="/player" class="relative px-3 py-2 rounded-full border border-transparent transition duration-300 hover:border-[#9415d8] hover:text-[#9415d8]">
-          Video
+      <a href="/player" 
+         class="nav-link px-4 py-2 font-medium rounded-lg transition-all duration-300 hover:scale-105"
+         [ngClass]="isOrangeCatPage ? 'text-orange-400 hover:text-orange-300 hover:bg-orange-500/10' : 'text-gray-700 hover:text-purple-600 hover:bg-purple-50/50'">
+        Videos
       </a>
-      <a href="/games" class="relative px-3 py-2 rounded-full border border-transparent transition duration-300 hover:border-[#9415d8] hover:text-[#9415d8]">
-          Games
+      <a href="/games" 
+         class="nav-link px-4 py-2 font-medium rounded-lg transition-all duration-300 hover:scale-105"
+         [ngClass]="isOrangeCatPage ? 'text-orange-400 hover:text-orange-300 hover:bg-orange-500/10' : 'text-gray-700 hover:text-purple-600 hover:bg-purple-50/50'">
+        Games
       </a>
-      <a href="#" class="relative px-3 py-2 rounded-full border border-transparent transition duration-300 hover:border-[#9415d8] hover:text-[#9415d8]">
-          About
+      <a href="#" 
+         class="nav-link px-4 py-2 font-medium rounded-lg transition-all duration-300 hover:scale-105"
+         [ngClass]="isOrangeCatPage ? 'text-orange-400 hover:text-orange-300 hover:bg-orange-500/10' : 'text-gray-700 hover:text-purple-600 hover:bg-purple-50/50'">
+        About
       </a>
-      <a *ngIf="isProductPage" (click)="onCartClick()" class="px-4 py-2 bg-[#9415d8] text-white rounded-full transition duration-300 hover:bg-[#7b12b5]">
-          Cart
-      </a>
+    </div>
 
-      <a href="/signup" *ngIf="!isProductPage" class="px-4 py-2 bg-[#9415d8] text-white rounded-full transition duration-300 hover:bg-[#7b12b5]">
-          Login
-      </a>
-      <!-- <a href="/signup" *ngIf="!isProductPage" class="px-4 py-2 border border-gray-400 text-[#9415d8] rounded-full transition duration-300 hover:bg-gray-100">
-          Signup
-      </a>    -->
-  </div>
-
-  <!-- Mobile Menu and Cart Icon -->
-  <div class="md:hidden flex items-center space-x-4 order-last">
-      <a *ngIf="isProductPage" (click)="onCartClick()" class="px-4 py-2 bg-[#9415d8] text-white rounded-full transition duration-300 hover:bg-[#7b12b5]">
-          Cart
-      </a>
-      <button class="p-2 focus:outline-none" (click)="toggleMenu()">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+    <!-- Desktop Action Buttons -->
+    <div class="hidden md:flex items-center space-x-4">
+      <a *ngIf="isProductPage" 
+         (click)="onCartClick()" 
+         class="nav-button px-6 py-2.5 text-white font-semibold rounded-full hover:scale-105 transform transition-all duration-300 shadow-lg hover:shadow-xl cursor-pointer"
+         [ngClass]="isOrangeCatPage ? 'bg-gradient-to-r from-orange-500 to-orange-400 hover:from-orange-600 hover:to-orange-500' : 'bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600'">
+        <span class="flex items-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.6 6H19"/>
           </svg>
-      </button>
+          Cart
+        </span>
+      </a>
 
+      <a href="/signup" 
+         *ngIf="!isProductPage" 
+         class="nav-button px-6 py-2.5 text-white font-semibold rounded-full hover:scale-105 transform transition-all duration-300 shadow-lg hover:shadow-xl"
+         [ngClass]="isOrangeCatPage ? 'bg-gradient-to-r from-orange-500 to-orange-400 hover:from-orange-600 hover:to-orange-500' : 'bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600'">
+        <span class="flex items-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+          </svg>
+          Login
+        </span>
+      </a>
+    </div>
+
+    <!-- Mobile Menu Button and Cart -->
+    <div class="md:hidden flex items-center space-x-3">
+      <a *ngIf="isProductPage" 
+         (click)="onCartClick()" 
+         class="nav-button px-4 py-2 text-white font-semibold rounded-full hover:scale-105 transform transition-all duration-300 shadow-md text-sm"
+         [ngClass]="isOrangeCatPage ? 'bg-gradient-to-r from-orange-500 to-orange-400' : 'bg-gradient-to-r from-purple-600 to-purple-500'">
+        Cart
+      </a>
+      
+      <button class="hamburger p-2 rounded-lg transition-all duration-300 hover:scale-110" 
+              [ngClass]="isOrangeCatPage ? 'text-white hover:text-orange-400 hover:bg-orange-500/10' : 'text-gray-600 hover:text-purple-600 hover:bg-purple-50/50'"
+              (click)="toggleMenu()">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+    </div>
   </div>
 </nav>
 
-
 <!-- Mobile Menu -->
-<div *ngIf="isMenuOpen" class="md:hidden bg-white shadow-lg">
-  <div class="flex flex-col p-4 space-y-2 text-center">
-    <a href="#" class="py-2 text-black hover:text-[#9415d8] hover:bg-gray-100 rounded-full transition duration-300">Home</a>
-    <a href="/player" class="py-2 text-black hover:text-[#9415d8] hover:bg-gray-100 rounded-full transition duration-300">Video</a>
-    <a *ngIf="!isProductPage" href="/all-products" class="py-2 text-black hover:text-[#9415d8] hover:bg-gray-100 rounded-full  transition duration-300">Shop</a>
-    <a href="#" class="py-2 text-black hover:text-[#9415d8] hover:bg-gray-100 rounded-full  transition duration-300">Games</a>
-    <a href="#" class="py-2 text-black hover:text-[#9415d8] hover:bg-gray-100 rounded-full transition duration-300">About</a>
-    <a *ngIf="!isProductPage" href="/signin" class="py-2 bg-[#9415d8] text-white rounded-full  transition duration-300 hover:bg-[#7b12b5]">Login</a>
-    <a *ngIf="!isProductPage" href="/signup" class="py-2 border border-gray-400 text-[#9415d8] rounded-full  transition duration-300 hover:bg-gray-100">Signup</a>
+<div *ngIf="isMenuOpen" 
+     class="mobile-menu fixed top-[72px] left-0 right-0 z-40 backdrop-blur-lg border-b shadow-xl md:hidden"
+     [ngClass]="isOrangeCatPage ? 'orange-cat-mobile' : ''">
+  <div class="max-w-7xl mx-auto px-4 py-6 space-y-3">
+    <!-- Mobile Navigation Links -->
+    <a href="#" 
+       class="mobile-nav-link block px-4 py-3 font-medium rounded-xl transition-all duration-300 transform hover:translate-x-1"
+       [ngClass]="isOrangeCatPage ? 'text-orange-400 hover:text-orange-300 hover:bg-orange-500/10' : 'text-gray-700 hover:text-purple-600 hover:bg-purple-100/50'">
+      Home
+    </a>
+    <a href="/player" 
+       class="mobile-nav-link block px-4 py-3 font-medium rounded-xl transition-all duration-300 transform hover:translate-x-1"
+       [ngClass]="isOrangeCatPage ? 'text-orange-400 hover:text-orange-300 hover:bg-orange-500/10' : 'text-gray-700 hover:text-purple-600 hover:bg-purple-100/50'">
+      Videos
+    </a>
+    <a *ngIf="!isProductPage" 
+       href="/all-products" 
+       class="mobile-nav-link block px-4 py-3 font-medium rounded-xl transition-all duration-300 transform hover:translate-x-1"
+       [ngClass]="isOrangeCatPage ? 'text-orange-400 hover:text-orange-300 hover:bg-orange-500/10' : 'text-gray-700 hover:text-purple-600 hover:bg-purple-100/50'">
+      Shop
+    </a>
+    <a href="/games" 
+       class="mobile-nav-link block px-4 py-3 font-medium rounded-xl transition-all duration-300 transform hover:translate-x-1"
+       [ngClass]="isOrangeCatPage ? 'text-orange-400 hover:text-orange-300 hover:bg-orange-500/10' : 'text-gray-700 hover:text-purple-600 hover:bg-purple-100/50'">
+      Games
+    </a>
+    <a href="#" 
+       class="mobile-nav-link block px-4 py-3 font-medium rounded-xl transition-all duration-300 transform hover:translate-x-1"
+       [ngClass]="isOrangeCatPage ? 'text-orange-400 hover:text-orange-300 hover:bg-orange-500/10' : 'text-gray-700 hover:text-purple-600 hover:bg-purple-100/50'">
+      About
+    </a>
+    
+    <!-- Mobile Action Buttons -->
+    <div class="pt-4 space-y-3"
+         [ngClass]="isOrangeCatPage ? 'border-t border-orange-500/30' : 'border-t border-purple-200/50'">
+      <a *ngIf="!isProductPage" 
+         href="/signin" 
+         class="mobile-nav-button block w-full px-4 py-3 text-white font-semibold rounded-xl text-center transform transition-all duration-300 hover:scale-[1.02] shadow-lg"
+         [ngClass]="isOrangeCatPage ? 'bg-gradient-to-r from-orange-500 to-orange-400 hover:from-orange-600 hover:to-orange-500' : 'bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600'">
+        Login
+      </a>
+      <a *ngIf="!isProductPage" 
+         href="/signup" 
+         class="mobile-nav-button outline block w-full px-4 py-3 font-semibold rounded-xl text-center transform transition-all duration-300 hover:scale-[1.02]"
+         [ngClass]="isOrangeCatPage ? 'border-2 border-orange-400 text-orange-400 hover:bg-orange-500/10 hover:border-orange-300' : 'border-2 border-purple-300 text-purple-600 hover:bg-purple-50 hover:border-purple-400'">
+        Sign Up
+      </a>
+    </div>
   </div>
 </div>
 
-<!-- Mobile Menu Icon (Only when not on the product page) -->
-
-
-<!-- Mobile Bottom Navigation -->
-<!-- <div class="md:hidden fixed bottom-0 left-0 w-full bg-white flex justify-around p-2 text-black shadow-md">
-  <a href="#" class="hover:text-[#9415d8] flex flex-col items-center">
-    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M3 10.5L12 3l9 7.5V21a1 1 0 01-1 1h-5a1 1 0 01-1-1v-4a1 1 0 00-1-1h-4a1 1 0 00-1 1v4a1 1 0 01-1 1H4a1 1 0 01-1-1v-10.5z" />
-    </svg>
-    <span class="text-xs">Home</span>
-  </a>
-  <a href="/player" class="hover:text-[#9415d8] flex flex-col items-center">
-    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M16 11h-1V9a4 4 0 00-8 0v2H6a1 1 0 00-1 1v9a1 1 0 001 1h14a1 1 0 001-1v-9a1 1 0 00-1-1h-4zM8 9a2 2 0 014 0v2H8V9zm8 11H8v-6h8v6z" />
-    </svg>
-    <span class="text-xs">Video</span>
-  </a>
-  <a href="/all-products" class="hover:text-[#9415d8] flex flex-col items-center">
-    <img src="/assets/icons/shopping cart.svg" alt="Shop" class="w-6 h-6 mx-auto" />
-    <span class="text-xs">Shop</span>
-  </a>
-  <a href="#" class="hover:text-[#9415d8] flex flex-col items-center">
-    <img src="/assets/icons/games-icon.svg" alt="Games" class="w-6 h-6 mx-auto" />
-    <span class="text-xs">Games</span>
-  </a>
-</div> -->
+<!-- Backdrop for mobile menu -->
+<div *ngIf="isMenuOpen" 
+     class="fixed inset-0 bg-black/20 backdrop-blur-sm z-30 md:hidden" 
+     (click)="toggleMenu()">
+</div>

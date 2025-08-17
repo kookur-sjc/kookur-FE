@@ -1,16 +1,19 @@
-import { Component } from '@angular/core';
+import { Component, Inject, PLATFORM_ID } from '@angular/core';
 import { EcomService } from '../ecom/ecom.service';
 import { Router } from '@angular/router';
 import { CartItem, ItemInventory, UserAddressTable } from '../../model';
 import { CognitoService } from '../../cognito.service';
-import { NgFor, NgIf, NgSwitchDefault } from '@angular/common';
+import { NgFor, NgIf, isPlatformBrowser } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
-import { FormsModule, NgModel } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
+import { PaymentService, PaymentRequest } from '../../services/payment.service';
+
+declare var Razorpay: any;
 
 @Component({
   selector: 'app-order-page',
   standalone: true,
-  providers: [EcomService],
+  providers: [EcomService, PaymentService],
   imports: [NgIf, NgFor, HttpClientModule, FormsModule],
   templateUrl: './order-page.component.html',
   styleUrl: './order-page.component.scss'
@@ -27,7 +30,9 @@ export class OrderPageComponent {
   constructor(
     private ecomService: EcomService,
     private cognitoService: CognitoService,
-    private router: Router
+    private router: Router,
+    private paymentService: PaymentService,
+    @Inject(PLATFORM_ID) private platformId: Object
   ) {}
 
   ngOnInit(): void {
@@ -103,6 +108,68 @@ export class OrderPageComponent {
   }
 
   placeOrder() {
+    // First create a payment request
+    const paymentRequest: PaymentRequest = {
+      amount: 1000,
+      currency: 'INR',
+      description: 'Purchase from Kookur',
+      customerId: 'yoyoyo'
+    };
+
+    this.paymentService.createOrder(paymentRequest).subscribe({
+      next: (orderData) => {
+        if (isPlatformBrowser(this.platformId)) {
+          this.initiateRazorpayPayment(orderData);
+        } else {
+          console.error('Razorpay can only be initialized in browser environment');
+        }
+      },
+      error: (err) => {
+        console.error('Error creating Razorpay order:', err);
+      }
+    });
+  }
+
+  initiateRazorpayPayment(orderData: any) {
+    const options = {
+      key: orderData.key || 'rzp_test_yourtestkey',
+      amount: orderData.amount || this.totalAmount * 100, // Amount in smallest currency unit (paisa)
+      currency: orderData.currency || 'INR',
+      name: 'Kookur',
+      description: 'Purchase from Kookur',
+      order_id: orderData.orderId,
+      handler: (response: any) => {
+        this.verifyPayment(response);
+      },
+      prefill: {
+        name: 'Customer Name',
+        email: 'email@example.com',
+        contact: '9999999999'
+      },
+      notes: {},
+      theme: {
+        color: '#3399cc'
+      }
+    };
+
+    const rzp = new Razorpay(options);
+    rzp.open();
+  }
+
+  verifyPayment(payment: any) {
+    this.paymentService.verifyPayment(payment).subscribe({
+      next: (response) => {
+        // After payment verification is successful, place the order in your system
+        this.finalizeOrder();
+      },
+      error: (err) => {
+        console.error('Payment verification failed:', err);
+        alert('Payment verification failed. Please try again.');
+      }
+    });
+  }
+
+  finalizeOrder() {
     this.ecomService.placeOrder(this.userId).subscribe({
       next: (order) => {
         alert('Order placed successfully!');

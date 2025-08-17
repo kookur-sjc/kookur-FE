@@ -1,44 +1,80 @@
 <div class="home-container">
+  <!-- Floating Decorative Elements -->
+  <div class="floating-decorations">
+    <div class="floating-element sparkle"></div>
+    <div class="floating-element pawprint"></div>
+    <div class="floating-element blob"></div>
+    <div class="floating-element sparkle"></div>
+    <div class="floating-element pawprint"></div>
+    <div class="floating-element blob"></div>
+    <div class="floating-element sparkle"></div>
+    <div class="floating-element pawprint"></div>
+  </div>
+
   <!-- Welcome Section -->
   <div class="welcome-section">
     <div class="text-section">
       <h1 class="headline">
-        <span class="headline-word">You have</span>
-        <span class="headline-word">been</span>
-        <span class="headline-word">chosen,</span>
-        <span class="headline-word">Hooman</span>
+        <span class="headline-line">You have been chosen,</span>
+        <span class="headline-line">Hooman</span>
       </h1>
       <button (click)="navigateToFeature('videos')" class="get-started-btn">Get Started</button>
+      
+      <!-- Floating Food Items -->
+      <div class="floating-food-container">
+        <div 
+          *ngFor="let food of floatingFoods; trackBy: trackFood" 
+          class="floating-food"
+          [style.left.px]="food.x"
+          [style.top.px]="food.y"
+          [attr.data-food-type]="food.type"
+          (mousedown)="startDragging($event, food)"
+          (touchstart)="startDragging($event, food)"
+        >
+          <img [src]="food.image" [alt]="food.type" class="food-image">
+        </div>
+      </div>
     </div>
 
-        <!-- <div class="media-container">
-      <div class="tube-container">
-        <div class="image-slider">
-          <div class="slide">
-            <img src="assets/images/dog-eyes1.png" alt="Dog Eyes 1" class="slide-image">
+    <!-- Animated Cat Section -->
+    <div class="cat-container">
+      <div class="cat-image-wrapper" 
+           (mouseup)="onCatMouseUp($event)"
+           (touchend)="onCatTouchEnd($event)">
+        <img [src]="getCurrentCatImage()" 
+             alt="Cat" 
+             class="cat-image"
+             [class.happy]="catState === 'happy'"
+             [class.angry]="catState === 'angry'">
+        
+        <!-- Sparkle Container -->
+        <div class="sparkle-container">
+          <div class="sparkle sparkle-1">
+            <img src="assets/images/sparkle.png" alt="Sparkle">
           </div>
-          <div class="slide">
-            <img src="assets/images/cat-eyes1.png" alt="Cat Eyes 1" class="slide-image">
+          <div class="sparkle sparkle-2">
+            <img src="assets/images/sparkle.png" alt="Sparkle">
           </div>
-          <div class="slide">
-            <img src="assets/images/dog-eyes2.png" alt="Dog Eyes 2" class="slide-image">
+          <div class="sparkle sparkle-3">
+            <img src="assets/images/sparkle.png" alt="Sparkle">
           </div>
-          <div class="slide">
-            <img src="assets/images/cat-eyes2.png" alt="Cat Eyes 2" class="slide-image">
+          <div class="sparkle sparkle-4">
+            <img src="assets/images/sparkle.png" alt="Sparkle">
+          </div>
+          <div class="sparkle sparkle-5">
+            <img src="assets/images/sparkle.png" alt="Sparkle">
+          </div>
+          <div class="sparkle sparkle-6">
+            <img src="assets/images/sparkle.png" alt="Sparkle">
           </div>
         </div>
-        <div class="sliding-door left">
-          <div class="door-handle"></div>
+        
+        <div class="eye left-eye" #leftEye [class.hidden]="catState !== 'normal'">
+          <img src="assets/images/cat-eyes-home.png" alt="Cat Eye" class="eye-image">
         </div>
-        <div class="sliding-door right">
-          <div class="door-handle"></div>
-        </div> -->
-    <!-- Video Section -->
-    <div class="media-container w-full md:w-4/6 relative mt-4 md:mt-0">
-      <div class="w-full h-60 md:h-96 border-black overflow-hidden shadow-md items-center" style="border-radius: 20% / 50%;">
-        <video autoplay loop muted playsinline class="w-full h-full object-cover">
-          <source src="https://kookurvideostorage.s3.ap-south-1.amazonaws.com/2023-11-30_13-23-57_UTC.mp4" type="video/mp4" />
-        </video>
+        <div class="eye right-eye" #rightEye [class.hidden]="catState !== 'normal'">
+          <img src="assets/images/cat-eyes-home.png" alt="Cat Eye" class="eye-image">
+        </div>
       </div>
     </div>
   </div>
@@ -73,6 +109,14 @@
         <h2 class="feature-title">Games</h2>
       </div>
       <p class="feature-description">Have fun with interactive games designed for everyone.</p>
+    </div>
+    
+    <div class="feature-box" (click)="navigateToFeature('orange-cat')">
+      <div class="feature-video-container">
+        <img src="assets/images/orange-cat-disc.png" alt="Orange Cat" class="feature-video orange-cat-preview">
+        <h2 class="feature-title">Orange Cat</h2>
+      </div>
+      <p class="feature-description">A mysterious spinning cat in a dreamy space.</p>
     </div>
   </div>
   

@@ -1,5 +1,6 @@
 <!-- footer.component.html -->
-<footer class="w-full bg-white text-black py-6 shadow-inner">
+<footer class="w-full py-6 shadow-inner"
+        [ngClass]="isOrangeCatPage ? 'bg-black text-orange-400' : 'bg-white text-black'">
     <div class="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
       <!-- Left Section -->
       <div class="text-center md:text-left">
@@ -10,19 +11,22 @@
       <div class="flex space-x-6">
         <a
           href="#"
-          class="relative px-2 py-1 rounded-md transition duration-300 hover:bg-gray-300 hover:text-black"
+          class="relative px-2 py-1 rounded-md transition duration-300"
+          [ngClass]="isOrangeCatPage ? 'hover:bg-orange-500/20 hover:text-orange-300' : 'hover:bg-gray-300 hover:text-black'"
         >
           Privacy Policy
         </a>
         <a
           href="#"
-          class="relative px-2 py-1 rounded-md transition duration-300 hover:bg-gray-300 hover:text-black"
+          class="relative px-2 py-1 rounded-md transition duration-300"
+          [ngClass]="isOrangeCatPage ? 'hover:bg-orange-500/20 hover:text-orange-300' : 'hover:bg-gray-300 hover:text-black'"
         >
           Terms of Service
         </a>
         <a
           href="#"
-          class="relative px-2 py-1 rounded-md transition duration-300 hover:bg-gray-300 hover:text-black"
+          class="relative px-2 py-1 rounded-md transition duration-300"
+          [ngClass]="isOrangeCatPage ? 'hover:bg-orange-500/20 hover:text-orange-300' : 'hover:bg-gray-300 hover:text-black'"
         >
           Contact Us
         </a>

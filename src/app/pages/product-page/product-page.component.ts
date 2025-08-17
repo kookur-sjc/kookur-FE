@@ -6,6 +6,7 @@ import { NgFor, NgIf, NgStyle, NgClass } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { LoadingComponent } from '../../shared/components/loading/loading.component';
+import { WindowService } from '../../services/window.service';
 
 @Component({
   selector: 'app-product-page',
@@ -27,12 +28,12 @@ export class ProductPageComponent implements OnInit {
   window: any = window;
   loading: boolean = true;
 
-  constructor(private inventoryService: EcomService, private router: Router) {}
+  constructor(private inventoryService: EcomService, private router: Router, private windowService: WindowService) {}
   
   @HostListener('window:resize')
   onResize() {
     // If window width becomes larger than sm breakpoint, always show filters
-    if (window.innerWidth >= 640) {
+    if (typeof window !== 'undefined' && window.innerWidth >= 640) {
       this.showFilters = true;
     }
   }
@@ -40,8 +41,13 @@ export class ProductPageComponent implements OnInit {
   ngOnInit(): void {
     this.fetchProducts();
     // Initialize filter visibility based on screen size
-    this.showFilters = window.innerWidth >= 640;
+    this.showFilters = typeof window !== 'undefined' && window.innerWidth >= 640;
 
+    if (this.windowService.isWindowAvailable()) {
+      const windowObj = this.windowService.nativeWindow;
+      // Now you can safely use windowObj
+    }
+    
     setTimeout(() => {
       this.loading = false;
     }, 1000);

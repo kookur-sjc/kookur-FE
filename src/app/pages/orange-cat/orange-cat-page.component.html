@@ -1,0 +1,12 @@
+<div class="orange-cat-container" (mousemove)="onMouseMove($event)" (touchmove)="onTouchMove($event)">
+  <!-- Cursor Spotlight -->
+  <div class="spotlight" [style.left.px]="spotlightX" [style.top.px]="spotlightY"></div>
+
+  <!-- Orange Cat with Glow -->
+  <div class="cat-section">
+    <div class="cat-glow"></div>
+    <img src="assets/images/orange-cat-disc.png" alt="Orange Cat" class="orange-cat">
+  </div>
+
+
+</div>

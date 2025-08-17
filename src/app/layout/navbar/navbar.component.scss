@@ -1,0 +1,300 @@
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Quicksand:wght@300;400;500;600;700&display=swap');
+
+/* Enhanced Navbar Styling */
+nav {
+  font-family: 'Quicksand', sans-serif;
+  background: rgba(255, 255, 255, 0.85) !important;
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(148, 21, 216, 0.08);
+  box-shadow: 0 4px 24px rgba(148, 21, 216, 0.06);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Orange Cat Page Navbar Styling */
+nav.orange-cat-nav {
+  background: rgba(0, 0, 0, 0.85) !important;
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 123, 0, 0.5);
+  box-shadow: 0 4px 24px rgba(255, 123, 0, 0.1);
+}
+
+/* Scrolled state */
+nav.scrolled {
+  background: rgba(243, 232, 255, 0.9) !important;
+  backdrop-filter: blur(24px);
+  border-bottom: 1px solid rgba(238, 220, 255, 0.5);
+  box-shadow: 0 8px 32px rgba(148, 21, 216, 0.12);
+}
+
+/* Orange Cat Page Scrolled State */
+nav.orange-cat-nav.scrolled {
+  background: rgba(0, 0, 0, 0.9) !important;
+  backdrop-filter: blur(24px);
+  border-bottom: 1px solid rgba(255, 123, 0, 0.6);
+  box-shadow: 0 8px 32px rgba(255, 123, 0, 0.15);
+}
+
+/* Logo styling */
+.logo-text {
+  font-family: 'Fredoka', cursive !important;
+  font-weight: 700;
+  background: linear-gradient(135deg, #9415D8, #C173F0, #FF9BD1);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 2px 8px rgba(148, 21, 216, 0.1);
+  transition: all 0.3s ease;
+}
+
+.logo-text:hover {
+  background: linear-gradient(135deg, #C173F0, #FF9BD1, #FFD166);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  transform: scale(1.05);
+}
+
+/* Navigation links */
+.nav-link {
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 500;
+  color: #2B2B2B;
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+}
+
+.nav-link::before {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #9415D8, #C173F0);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateX(-50%);
+  border-radius: 1px;
+}
+
+.nav-link:hover {
+  color: #9415D8;
+  transform: translateY(-1px);
+}
+
+.nav-link:hover::before {
+  width: 100%;
+}
+
+/* Button styling */
+.nav-button {
+  background: linear-gradient(135deg, #9415D8, #C173F0) !important;
+  box-shadow: 0 4px 16px rgba(148, 21, 216, 0.25);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-weight: 600;
+  position: relative;
+  overflow: hidden;
+}
+
+.nav-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.6s ease;
+}
+
+.nav-button:hover::before {
+  left: 100%;
+}
+
+.nav-button:hover {
+  background: linear-gradient(135deg, #7b12b5, #9415D8) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(148, 21, 216, 0.35);
+}
+
+.nav-button:active {
+  transform: translateY(0);
+}
+
+/* Mobile menu enhancements */
+.mobile-menu {
+  background: rgba(243, 232, 255, 0.95) !important;
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(238, 220, 255, 0.3);
+  box-shadow: 0 8px 32px rgba(148, 21, 216, 0.1);
+}
+
+/* Orange Cat Mobile Menu */
+.mobile-menu.orange-cat-mobile {
+  background: rgba(0, 0, 0, 0.95) !important;
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 123, 0, 0.5);
+  box-shadow: 0 8px 32px rgba(255, 123, 0, 0.1);
+}
+
+.mobile-nav-link {
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 500;
+  color: #2B2B2B;
+  transition: all 0.3s ease;
+  border-radius: 12px;
+  position: relative;
+}
+
+.mobile-nav-link:hover {
+  background: rgba(196, 115, 240, 0.08) !important;
+  color: #9415D8;
+  transform: translateX(4px);
+}
+
+.mobile-nav-button {
+  background: linear-gradient(135deg, #9415D8, #C173F0) !important;
+  color: white !important;
+  font-weight: 600;
+  box-shadow: 0 4px 16px rgba(148, 21, 216, 0.25);
+  transition: all 0.3s ease;
+}
+
+.mobile-nav-button:hover {
+  background: linear-gradient(135deg, #7b12b5, #9415D8) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(148, 21, 216, 0.35);
+}
+
+.mobile-nav-button.outline {
+  background: transparent !important;
+  border: 2px solid #C173F0 !important;
+  color: #9415D8 !important;
+}
+
+.mobile-nav-button.outline:hover {
+  background: rgba(196, 115, 240, 0.1) !important;
+  border-color: #9415D8 !important;
+}
+
+/* Mobile menu toggle animation */
+.hamburger {
+  transition: all 0.3s ease;
+}
+
+.hamburger:hover {
+  color: #9415D8;
+  transform: scale(1.1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .logo-text {
+    font-size: 1.5rem;
+  }
+  
+  nav {
+    padding: 0.75rem 1rem;
+  }
+}
+
+/* Loading state animation */
+@keyframes shimmer {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
+.nav-shimmer {
+  background: linear-gradient(90deg, #f0f0f0 0px, #e0e0e0 40px, #f0f0f0 80px);
+  background-size: 200px;
+  animation: shimmer 1.5s linear infinite;
+}
+
+/* Orange Cat Page Specific Styles */
+.orange-cat-logo {
+  background: linear-gradient(135deg, #FF7B00, #FFA733, #FFB84D) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  text-shadow: 0 2px 8px rgba(255, 123, 0, 0.2) !important;
+}
+
+.orange-cat-logo:hover {
+  background: linear-gradient(135deg, #FFA733, #FFB84D, #FFC966) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+}
+
+/* Orange Cat Nav Links */
+.orange-cat-nav .nav-link {
+  color: #fb923c !important; /* text-orange-400 */
+}
+
+.orange-cat-nav .nav-link:hover {
+  color: #fdba74 !important; /* text-orange-300 */
+  background-color: rgba(249, 115, 22, 0.1) !important; /* hover:bg-orange-500/10 */
+}
+
+.orange-cat-nav .nav-link::before {
+  background: linear-gradient(90deg, #f97316, #fb923c) !important; /* orange gradient */
+}
+
+/* Orange Cat Nav Buttons */
+.orange-cat-nav .nav-button {
+  background: linear-gradient(135deg, #f97316, #fb923c) !important; /* from-orange-500 to-orange-400 */
+  box-shadow: 0 4px 16px rgba(249, 115, 22, 0.25) !important;
+}
+
+.orange-cat-nav .nav-button:hover {
+  background: linear-gradient(135deg, #ea580c, #f97316) !important; /* hover:from-orange-600 hover:to-orange-500 */
+  box-shadow: 0 8px 24px rgba(249, 115, 22, 0.35) !important;
+}
+
+/* Orange Cat Mobile Nav Links */
+.orange-cat-mobile .mobile-nav-link {
+  color: #fb923c !important; /* text-orange-400 */
+}
+
+.orange-cat-mobile .mobile-nav-link:hover {
+  color: #fdba74 !important; /* text-orange-300 */
+  background: rgba(249, 115, 22, 0.1) !important; /* hover:bg-orange-500/10 */
+}
+
+/* Orange Cat Mobile Nav Buttons */
+.orange-cat-mobile .mobile-nav-button {
+  background: linear-gradient(135deg, #f97316, #fb923c) !important; /* from-orange-500 to-orange-400 */
+  color: white !important;
+  box-shadow: 0 4px 16px rgba(249, 115, 22, 0.25) !important;
+}
+
+.orange-cat-mobile .mobile-nav-button:hover {
+  background: linear-gradient(135deg, #ea580c, #f97316) !important; /* hover:from-orange-600 hover:to-orange-500 */
+  box-shadow: 0 6px 20px rgba(249, 115, 22, 0.35) !important;
+}
+
+.orange-cat-mobile .mobile-nav-button.outline {
+  background: transparent !important;
+  border: 2px solid #fb923c !important; /* border-orange-400 */
+  color: #fb923c !important; /* text-orange-400 */
+}
+
+.orange-cat-mobile .mobile-nav-button.outline:hover {
+  background: rgba(249, 115, 22, 0.1) !important; /* hover:bg-orange-500/10 */
+  border-color: #fdba74 !important; /* hover:border-orange-300 */
+}
+
+/* Orange Cat Hamburger Button */
+.orange-cat-nav .hamburger {
+  color: white !important; /* text-white */
+}
+
+.orange-cat-nav .hamburger:hover {
+  color: #fb923c !important; /* hover:text-orange-400 */
+  background-color: rgba(249, 115, 22, 0.1) !important; /* hover:bg-orange-500/10 */
+}
